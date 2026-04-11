@@ -14,12 +14,15 @@
 | [iniconfig](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-iniconfig-2.1.0-LICENSE.txt) | 2.1.0 | MIT |
 | [lxml](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-lxml-6.0.2-LICENSE.txt) | 6.0.2 | BSD-3-Clause |
 | [numpy](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-numpy-2.0.2-LICENSE.txt) | 2.0.2 | BSD License |
+| [opencv-python](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-opencv-python-4.13.0.92-LICENSE.txt) | 4.13.0.92 | Apache Software License |
 | [packaging](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-packaging-26.0-LICENSE.txt) | 26.0 | Apache-2.0 OR BSD-2-Clause |
 | [pandas](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pandas-2.3.3-LICENSE.txt) | 2.3.3 | BSD License |
+| [pillow](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pillow-11.3.0-LICENSE.txt) | 11.3.0 | MIT-CMU |
 | [playwright](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-playwright-1.58.0-LICENSE.txt) | 1.58.0 | Apache-2.0 |
 | [playwright-stealth](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-playwright-stealth-2.0.3-LICENSE.txt) | 2.0.3 | MIT |
 | [pluggy](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pluggy-1.6.0-LICENSE.txt) | 1.6.0 | MIT License |
 | [pyee](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pyee-13.0.1-LICENSE.txt) | 13.0.1 | MIT License |
+| [pytesseract](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pytesseract-0.3.13-LICENSE.txt) | 0.3.13 | Apache Software License |
 | [pytest](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pytest-8.4.2-LICENSE.txt) | 8.4.2 | MIT License |
 | [python-dateutil](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-python-dateutil-2.9.0.post0-LICENSE.txt) | 2.9.0.post0 | Apache Software License; BSD License |
 | [pytz](https://github.com/nlevi-dev/PriceCompass/tree/master/legal/licenses/scraper-pytz-2026.1.post1-LICENSE.txt) | 2026.1.post1 | MIT License |
