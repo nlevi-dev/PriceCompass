@@ -36,6 +36,9 @@ testdata = [
     ("hungary/4pfitness.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP]),
     ("denmark/bilka.py",groceries),
     ("denmark/nemlig.py",groceries),
+    ("denmark/puregym.py",[Item.GYM_MONTHLY_MEMBERSHIP,Item.GYM_YEARLY_MEMBERSHIP]),
+    ("denmark/fitnessx.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP]),
+    ("denmark/vesterbronxgym.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP]),
 ]
 @pytest.mark.parametrize("module_path,categories", testdata)
 def test_sources(module_path, categories):
@@ -58,6 +61,7 @@ testdata = [
     (Country.HU, ["hungary/tesco.py","hungary/kifli.py","hungary/auchan.py"],groceries),
     (Country.HU, ["hungary/peakgym.py","hungary/flexgym.py","hungary/nemesfitness.py","hungary/4pfitness.py"],gym),
     (Country.DK, ["denmark/bilka.py","denmark/nemlig.py"],groceries),
+    (Country.HU, ["denmark/puregym.py","denmark/fitnessx.py","denmark/vesterbronxgym.py"],gym),
 ]
 @pytest.mark.parametrize("country,module_paths,categories", testdata)
 def test_country(country, module_paths, categories):
