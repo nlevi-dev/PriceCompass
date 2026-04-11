@@ -24,11 +24,16 @@ def test_translations(enums, language):
         raise Exception(f"Items {missing} has no {language} translation!")
 
 groceries = [Category.MEAT_AND_FISH,Category.FRUITS_AND_VEGETABLES,Category.DAIRY_AND_EGGS,Category.BAKERY,Category.DRINKS,Category.PANTRY_STAPLES,Category.HYGIENE_PRODUCTS]
+gym = [Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP,Item.GYM_YEARLY_MEMBERSHIP]
 
 testdata = [
     ("hungary/auchan.py",groceries),
     ("hungary/kifli.py",groceries),
     ("hungary/tesco.py",groceries),
+    ("hungary/peakgym.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP,Item.GYM_YEARLY_MEMBERSHIP]),
+    ("hungary/flexgym.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP,Item.GYM_YEARLY_MEMBERSHIP]),
+    ("hungary/nemesfitness.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP]),
+    ("hungary/4pfitness.py",[Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP]),
     ("denmark/bilka.py",groceries),
     ("denmark/nemlig.py",groceries),
 ]
@@ -51,6 +56,7 @@ def test_sources(module_path, categories):
 
 testdata = [
     (Country.HU, ["hungary/tesco.py","hungary/kifli.py","hungary/auchan.py"],groceries),
+    (Country.HU, ["hungary/peakgym.py","hungary/flexgym.py","hungary/nemesfitness.py","hungary/4pfitness.py"],gym),
     (Country.DK, ["denmark/bilka.py","denmark/nemlig.py"],groceries),
 ]
 @pytest.mark.parametrize("country,module_paths,categories", testdata)

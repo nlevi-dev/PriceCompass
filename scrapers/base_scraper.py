@@ -15,6 +15,7 @@ class BaseScraper:
         scrolling = False,
         post_init_action = None,
         post_scroll_action = None,
+        headless = True,
     ):
         self.url = url
         self.scrolling = scrolling
@@ -22,6 +23,7 @@ class BaseScraper:
         self.post_scroll_action = post_scroll_action
         self.cache_dir = Path(__file__).resolve().parent.parent/"cache"
         self.cache_dir.mkdir(exist_ok=True)
+        self.headless = headless
 
     def is_allowed_by_robots(self):
         parsed_url = urlparse(self.url)
@@ -78,7 +80,7 @@ class BaseScraper:
         if not self.is_allowed_by_robots():
            raise Exception(f"Scraping \"{self.url}\" is not allowed by robots.txt!")
         with Stealth().use_sync(sync_playwright()) as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=self.headless)
             context = browser.new_context(
                 user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 viewport={'width': 1080, 'height': 720},

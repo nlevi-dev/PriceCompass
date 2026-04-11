@@ -16,14 +16,9 @@ root_path = Path(__file__).resolve().parent.parent.parent
 VENDOR = "auchan.hu"
 
 unit_lookup = {
-    Unit.KG: [r"\d/kg"],
-    Unit.L: [r"\d/l"],
-    Unit.EACH: [r"\d/db"],
-}
-unit_lookup2 = {
-    Unit.KG: ["\xa0Ft/kg"],
-    Unit.L: ["\xa0Ft/l"],
-    Unit.EACH: ["\xa0Ft/db"],
+    Unit.KG: [r"\d/kg",r"\xa0Ft/kg"],
+    Unit.L: [r"\d/l",r"\xa0Ft/l"],
+    Unit.EACH: [r"\d/db",r"\xa0Ft/db"],
 }
 
 def parse_item(node, categories, lang=Lang.EN):
@@ -50,18 +45,11 @@ def parse_item(node, categories, lang=Lang.EN):
             found_link = True
         if not found_price and isinstance(n, NavigableString):
             unit = None
-            if lang == Lang.HU:
-                for u in unit_lookup2:
-                    for unit_text in unit_lookup2[u]:
-                        if unit_text in n.get_text(strip=True):
-                            unit = u
-                            break
-            else:
-                for u in unit_lookup:
-                    for unit_text in unit_lookup[u]:
-                        if re.search(unit_text, n.get_text(strip=True)):
-                            unit = u
-                            break
+            for u in unit_lookup:
+                for unit_text in unit_lookup[u]:
+                    if re.search(unit_text, n.get_text(strip=True)):
+                        unit = u
+                        break
             if unit is not None:
                 obj["price"] = float(int(re.sub(r'\D', "", n.get_text(strip=True))))
                 obj["unit"] = unit
