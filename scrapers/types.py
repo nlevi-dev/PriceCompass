@@ -430,7 +430,7 @@ lookup_filters = {
         Category.NONE: Category.SPORTS,
         Lang.EN: (),
         Lang.HU: ([["napijegy","1 alkalom"],["flexgym felnőtt","1 alkalom"],["nemes fitness","napijegy"],["fitness budapest","1-entry pass"]],["diák","nyugdíjas","gyermek"]),
-        Lang.DK: ([["fitnessx","dagspas"],["vesterbronx","day pass"]],[]),
+        Lang.DK: ([["puregym","dagskort"],["fitnessx","dagspas"],["vesterbronx","day pass"]],[]),
     },
     Item.GYM_MONTHLY_MEMBERSHIP: {
         Unit.NONE: Unit.MONTHLY,
@@ -451,21 +451,21 @@ lookup_filters = {
         Category.NONE: Category.SPORTS,
         Lang.EN: (),
         Lang.HU: ([["monkeyboulder","felnőtt","napi"],["gravityboulder","csúcsidőszak","belépő"],["gravityboulder","völgyidő","belépő"],["flowboulder","felnőtt","belépő"]],["bérlet"]),
-        Lang.DK: (),
+        Lang.DK: ([["betaboulders","single pass"],["bisonboulders","day ticket"],["boulders","dagsentré og udstyr"]],[]),
     },
     Item.CLIMBING_GYM_MONTHLY_MEMBERSHIP: {
         Unit.NONE: Unit.MONTHLY,
         Category.NONE: Category.SPORTS,
         Lang.EN: (),
         Lang.HU: ([["monkeyboulder","felnőtt","bérlet","havi"],["gravityboulder","bérlet","1 hónap"],["flowboulder","bérlet","havi"]],["éves","féléves","negyedéves"]),
-        Lang.DK: (),
+        Lang.DK: ([["betaboulders","monthly"],["bisonboulders","monthly"],["bisonboulders","30 days pass"],["boulders","medlemskab"]],[]),
     },
     Item.CLIMBING_GYM_YEARLY_MEMBERSHIP: {
         Unit.NONE: Unit.YEARLY,
         Category.NONE: Category.SPORTS,
         Lang.EN: (),
         Lang.HU: ([["monkeyboulder","felnőtt","bérlet","éves"],["gravityboulder","bérlet","12 hónap"],["flowboulder","bérlet","éves"]],["féléves","negyedéves","havi"]),
-        Lang.DK: (),
+        Lang.DK: ([["betaboulders","yearly"],["bisonboulders","yearly"]],[]),
     },
     Item.EATING_OUT: {
         Unit.NONE: Unit.EACH,
