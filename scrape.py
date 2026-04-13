@@ -66,4 +66,3 @@ if __name__ == "__main__":
     data = df_to_data(df)
     with open(data_path/filename_json, "w") as f:
         json.dump(data, f)
-    print(df)

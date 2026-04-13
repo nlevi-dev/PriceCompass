@@ -3,15 +3,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import re
-import time
 
 import pandas as pd
 from bs4 import BeautifulSoup, NavigableString
 
-from scrapers.base_scraper import BaseScraper, DEFAULT_CACHE_TIME
-from scrapers.items import Item, Category, util_category_fruits, util_category_vegetables, Unit, Country, Lang, Currency, raw_items_to_df, read_csv_raw
-
-root_path = Path(__file__).resolve().parent.parent.parent
+from scrapers.base_scraper import BaseScraper, retrieve_cache, save_cache
+from scrapers.items import Item, Category, util_category_fruits, util_category_vegetables, Unit, Country, Lang, Currency, raw_items_to_df
 
 VENDOR = "auchan.hu"
 
@@ -92,15 +89,9 @@ def load_more2(page):
         page.wait_for_timeout(1000)
 
 def get_items_base(url, categories, lang = Lang.EN, use_cache = True, cache_time = None):
-    cache_name = re.sub(r'[^a-zA-Z0-9]', "", url)+".csv"
-    cache_path = root_path / "cache" / cache_name
-    if cache_time is None:
-        cache_time = DEFAULT_CACHE_TIME
-    if use_cache and cache_path.exists():
-        file_age = time.time() - cache_path.stat().st_mtime
-        if file_age < cache_time * 3600:
-            df = read_csv_raw(cache_path)
-            return df
+    cache = retrieve_cache(url, use_cache, cache_time)
+    if cache is not None:
+        return cache
     global pages
     pages = []
     if lang == Lang.HU:
@@ -117,8 +108,7 @@ def get_items_base(url, categories, lang = Lang.EN, use_cache = True, cache_time
                 if item:
                     items.append(item)
     df = pd.DataFrame(items)
-    cache_path.parent.mkdir(exist_ok=True)
-    df.to_csv(cache_path, index=False)
+    save_cache(url, df)
     return df
 
 def get_items(use_cache = True, cache_time = None):

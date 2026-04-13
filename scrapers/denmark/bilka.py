@@ -3,15 +3,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 import re
-import time
 
 import pandas as pd
 from bs4 import BeautifulSoup, NavigableString
 
-from scrapers.base_scraper import BaseScraper, DEFAULT_CACHE_TIME
-from scrapers.items import Item, Category, util_category_fruits, util_category_vegetables, Unit, Country, Lang, Currency, raw_items_to_df, read_csv_raw
-
-root_path = Path(__file__).resolve().parent.parent.parent
+from scrapers.base_scraper import BaseScraper, retrieve_cache, save_cache
+from scrapers.items import Item, Category, util_category_fruits, util_category_vegetables, Unit, Country, Lang, Currency, raw_items_to_df
 
 VENDOR = "bilkatogo.dk"
 
@@ -57,7 +54,7 @@ def parse_item(node, categories, name_include_description=False):
                 if " rl." in n.get_text(strip=True):
                     rolls = float(int(re.sub(r'[^\d]', "", n.get_text(strip=True))))
                     p = node.find(name="span", attrs={"class":"product-price__integer"})
-                    price = float(re.sub(r'[^\d\.]', "", p.get_text(strip=True).replace(",", ".")))
+                    price = float(re.sub(r'[^\d\,]', "", p.get_text(strip=True)).replace(",", "."))
                     obj["price"] = price / rolls
                     obj["unit"] = Unit.EACH
                     found_price = True
@@ -69,7 +66,7 @@ def parse_item(node, categories, name_include_description=False):
                             unit = u
                             break
                 if unit is not None:
-                    obj["price"] = float(re.sub(r'[^\d\.]', "", n.get_text(strip=True).replace(",", ".")))
+                    obj["price"] = float(re.sub(r'[^\d\,]', "", n.get_text(strip=True)).replace(",", "."))
                     obj["unit"] = unit
                     found_price = True
         if found_link and found_price:
@@ -89,15 +86,9 @@ def load_more(page):
         page.wait_for_timeout(1000)
 
 def get_items_base(url, categories, name_include_description, use_cache = True, cache_time = None):
-    cache_name = re.sub(r'[^a-zA-Z0-9]', "", url)+".csv"
-    cache_path = root_path / "cache" / cache_name
-    if cache_time is None:
-        cache_time = DEFAULT_CACHE_TIME
-    if use_cache and cache_path.exists():
-        file_age = time.time() - cache_path.stat().st_mtime
-        if file_age < cache_time * 3600:
-            df = read_csv_raw(cache_path)
-            return df
+    cache = retrieve_cache(url, use_cache, cache_time)
+    if cache is not None:
+        return cache
     page = BaseScraper(url, scrolling=True, post_init_action=accept_cookies, post_scroll_action=load_more).get_page()
     soup = BeautifulSoup(page, "lxml")
     nodes = soup.find_all(name="div", id="pinnedProductPLP")
@@ -108,8 +99,7 @@ def get_items_base(url, categories, name_include_description, use_cache = True, 
             if item:
                 items.append(item)
     df = pd.DataFrame(items)
-    cache_path.parent.mkdir(exist_ok=True)
-    df.to_csv(cache_path, index=False)
+    save_cache(url, df)
     return df
 
 def get_items(use_cache = True, cache_time = None):
