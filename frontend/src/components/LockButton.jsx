@@ -1,9 +1,9 @@
-import { Link, Link2Off } from 'lucide-react';
+import { Lock, LockOpen } from 'lucide-react';
 
-const LinkToggle = ({ isLinked, onToggle, size = 14, className = "" }) => {
+const LockToggle = ({ isLinked, onToggle, size = 14, className = "" }) => {
     return (
         <button
-            type="button"
+            title="unlocking a row will allow changing the count of the items individually for all countries"
             onClick={() => onToggle(!isLinked)}
             className={`inline-flex items-center justify-center p-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
                 isLinked ? 'text-blue-600' : 'text-black'
@@ -11,11 +11,11 @@ const LinkToggle = ({ isLinked, onToggle, size = 14, className = "" }) => {
             aria-label={isLinked ? "Unlink items" : "Link items"}
         >
             {isLinked ? (
-                <Link size={size} className="animate-in fade-in zoom-in duration-200" />
+                <Lock size={size} className="animate-in fade-in zoom-in duration-200" />
             ) : (
-                <Link2Off size={size} className="animate-in fade-in zoom-in duration-200" />
+                <LockOpen size={size} className="animate-in fade-in zoom-in duration-200" />
             )}
         </button>
     );
 };
-export default LinkToggle;
+export default LockToggle;

@@ -185,7 +185,7 @@ export function toPieData(data, itemCounts, countriesMap, categoriesMap) {
     data.forEach((categoryObj, catIdx) => {
         for (const [country, products] of Object.entries(categoryObj.countries)) {
             products.forEach(product => {
-                const price = product.price * (itemCounts[product.name]?.[country] ?? 0) / 10;
+                const price = product.price * (itemCounts[product.name]?.[country] ?? 0);
                 piesPerCountry[country][catIdx].sum += price;
                 sumsPerCountry[country] += price;
                 allSum += price;
@@ -199,30 +199,20 @@ export function toPieData(data, itemCounts, countriesMap, categoriesMap) {
     return [ allSum, piesPerCountry, sumsPerCountry, maxResult, pieCategoriesActive.filter(c => c.sum > 0) ];
 }
 
-export function toItemData(data, itemCounts, countriesMap, itemsMap, selectedCategory) {
+export function toItemData(data, itemCounts, countriesMap, itemsMap, selectedItem) {
     const linksPerCountry = countriesMap.reduce((acc, country) => {acc[country] = {}; return acc;}, {});
-    const itemsActive = [];
+    let maxLinkCount = 0;
 
     data.forEach(categoryObj => {
-        if (categoryObj.category === selectedCategory)
-            for (const [country, products] of Object.entries(categoryObj.countries)) {
-                products.forEach(product => {
-                    const count = (itemCounts[product.name]?.[country] ?? 0);
-                    if (count > 0 && !itemsActive.includes(product.name))
-                        itemsActive.push(product.name);
-                    linksPerCountry[country][product.name] = product;
-                });
+        for (const [country, products] of Object.entries(categoryObj.countries)) {
+            const product = products.find(p => p.name == selectedItem);
+            if (product) {
+                linksPerCountry[country] = product;
+                if (product.items.length > maxLinkCount)
+                    maxLinkCount = product.items.length;
             }
+        }
     });
 
-    const maxLinkCountPerItem = {};
-
-    itemsActive.forEach(item => {
-        countriesMap.forEach(country => {
-            const cnt = linksPerCountry[country][item].items.length;
-            maxLinkCountPerItem[item] = Math.max(maxLinkCountPerItem[item] ?? 0, cnt);
-        });
-    });
-
-    return [ linksPerCountry, itemsMap.filter(a => itemsActive.includes(a)), maxLinkCountPerItem ];
+    return [ linksPerCountry, maxLinkCount ];
 }

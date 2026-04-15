@@ -49,8 +49,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
     let unLinkedItems;
     let selectedCountries;
     let itemCounts;
-    let selectedCategory;
-    let openedItems;
+    let selectedItem;
     try {
         let bits = baseNtoBits(state);
 
@@ -120,25 +119,17 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
             }
         }
 
-        len = BITS_CATEGORY_LEN;
-        selectedCategory = categoriesMap[bitsToInt(bits, idx, len)];
+        len = BITS_ITEMS_LEN;
+        selectedItem = itemsMap[bitsToInt(bits, idx, len)];
         idx += len;
 
         len = 1;
-        const isSelectedCategory = Boolean(bitsToInt(bits, idx, len));
+        const isSelectedItem = Boolean(bitsToInt(bits, idx, len));
         idx += len;
 
-        if (!isSelectedCategory) {
-            selectedCategory = null;
+        if (!isSelectedItem) {
+            selectedItem = null;
         }
-
-        len = itemCount;
-        const openedItemsBitmask = bitsToBitmask(bits, idx, len);
-        openedItems = [];
-        for (let i = 0; i < openedItemsBitmask.length; i++)
-            if (openedItemsBitmask[i])
-                openedItems.push(itemsMap[i]);
-        idx += len;
     } catch (error) {
         console.error(error);
         aggMethod = aggregateMap[0];
@@ -146,19 +137,20 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
         unLinkedItems = [];
         selectedCountries = [];
         itemCounts = {};
-        selectedCategory = null;
-        openedItems = [];
+        selectedItem = null;
     }
 
-    const serializeState = (aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedCategory, openedItems, countryChanged = null) => {
+    const serializeState = (aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedItem, countryChanged = null) => {
         if (countryChanged === null)
             countryChanged = selectedCountries[0];
 
         let bits = [];
 
-        const aggregateIdx = aggregateMap.findIndex(a => a === aggMethod);
-        if (aggregateIdx < 0)
-            throw new Error("Aggregate mode not found!");
+        let aggregateIdx = aggregateMap.findIndex(a => a === aggMethod);
+        if (aggregateIdx < 0) {
+            aggregateIdx = 0;
+            console.error("Aggregate mode not found!");
+        }
         bits.push([intToBits(aggregateIdx), BITS_AGG_LEN]);
 
         const categoryCount = categoriesMap.length;
@@ -178,9 +170,11 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
 
         let allCnt = 0;
         for (let i = 0; i < countryCount; i++) {
-            const countryIdx = countriesMap.findIndex(c => c === selectedCountries[i]);
-            if (countryIdx < 0)
-                throw new Error("Country not found!");
+            let countryIdx = countriesMap.findIndex(c => c === selectedCountries[i]);
+            if (countryIdx < 0) {
+                countryIdx = 0;
+                console.error("Country not found!")
+            }
             bits.push([intToBits(countryIdx), BITS_COUNTRY_LEN]);
             for (let j = 0; j < itemCount; j++) {
                 if (unLinkedItems.includes(itemsMap[j])) {
@@ -197,20 +191,13 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
             }
         }
 
-        if (selectedCategory && allCnt > 0) {
-            const categoryIdx = categoriesMap.findIndex(c => c === selectedCategory);
-            bits.push([intToBits(categoryIdx), BITS_CATEGORY_LEN]);
+        if (selectedItem) {
+            const itemIdx = itemsMap.findIndex(c => c === selectedItem);
+            bits.push([intToBits(itemIdx), BITS_ITEMS_LEN]);
             bits.push([intToBits(1), 1]);
         } else {
-            bits.push([intToBits(0), BITS_CATEGORY_LEN]);
+            bits.push([intToBits(0), BITS_ITEMS_LEN]);
             bits.push([intToBits(0), 1]);
-        }
-
-        if (allCnt > 0) {
-            const openedItemsBitmask = itemsMap.map(c => openedItems.includes(c));
-            bits.push([bitmaskToBits(openedItemsBitmask), itemsMap.length]);
-        } else {
-            bits.push([intToBits(0), itemsMap.length]);
         }
         
         const uncompressed = appendBits(bits);
@@ -230,8 +217,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
         unLinkedItems,
         selectedCountries,
         itemCounts,
-        selectedCategory,
-        openedItems,
+        selectedItem,
         serializeState,
     ];
 }

@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import CollapseButton from './components/CollapseButton';
-import LinkButton from './components/LinkButton';
+import LockButton from './components/LockButton';
+import ListButton from './components/ListButton';
+import CloseButton from './components/CloseButton';
 import PieChart, { generateColors } from './components/PieChart';
 import BarChart from './components/BarChart';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -33,8 +35,7 @@ function App() {
         unLinkedItems,
         selectedCountries,
         itemCounts,
-        selectedCategory,
-        openedItems,
+        selectedItem,
         serializeState,
     ] = stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap);
 
@@ -56,7 +57,7 @@ function App() {
     };
 
     const handleReset = () => {
-        setState(serializeState(aggMethod, [], [], selectedCountries, {}, selectedCategory));
+        setState(serializeState(aggMethod, [], [], selectedCountries, {}, selectedItem));
     };
 
     const formatCurrency = (currency) => {
@@ -67,26 +68,30 @@ function App() {
 
     const pieColors = useMemo(() => generateColors(categoriesMap.length), [categoriesMap.length]);
     const [pieHighlightedCategory, setPieHighlightedCategory] = useState(null);
-    const [rowHighlightedCategory, setRowHighlightedCategory] = useState(null);
     
-    const [ linksPerCountry, itemsActive, maxLinkCountPerItem ] = toItemData(dataAgg, itemCounts, selectedCountries, itemsMap, selectedCategory);
+    const [ linksPerCountry, maxLinkCount ] = toItemData(dataAgg, itemCounts, selectedCountries, itemsMap, selectedItem);
 
-    const setSelectedCountries = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, a, itemCounts, null, []));
-    const setCollapsedCategories = (a) => setState(serializeState(aggMethod, a, unLinkedItems, selectedCountries, itemCounts, selectedCategory, openedItems));
-    const setAggMethod = (a) => setState(serializeState(a, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedCategory, openedItems));
-    const setUnLinkedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, a, selectedCountries, itemCounts, selectedCategory, openedItems));
-    const setItemCounts = (a, countryChanged) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, a, selectedCategory, openedItems.filter(item => itemsActive.includes(item)), countryChanged));
-    const setSelectedCategory = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, a, []));
-    const setOpenedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedCategory, a));
+    const setSelectedCountries = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, a, itemCounts, selectedItem));
+    const setCollapsedCategories = (a) => setState(serializeState(aggMethod, a, unLinkedItems, selectedCountries, itemCounts, selectedItem));
+    const setAggMethod = (a) => setState(serializeState(a, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedItem));
+    const setUnLinkedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, a, selectedCountries, itemCounts, selectedItem));
+    const setItemCounts = (a, countryChanged) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, a, selectedItem, countryChanged));
+    const setSelectedItem = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, a));
 
-    return (
-        <div className="flex flex-col min-h-screen">
+    if (selectedItem) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "unset";
+    }
+
+    return (<React.Fragment>
+        <div className="flex flex-col min-h-screen" style={{overflow:"hidden"}}>
             {/* Header */}
-            <header className="flex justify-between sticky top-0 p-4 bg-gray-500 z-10">
-                <div className="flex items-center space-x-5">
-                    <h1>Price Compass - International Price of Living Comparator</h1>
+            <header className="ribbon sticky top-0 p-4 bg-gray-500 z-10">
+                <div>
+                    <h1 style={{"whiteSpace":"wrap"}}>Price Compass - International Price of Living Comparator</h1>
                 </div>
-                <div className="flex items-center space-x-5">
+                <div>
                     <div className="flex items-center">
                         <p>Language:&nbsp;</p>
                         <select value={language} onChange={e => setLanguage(e.target.value)}>
@@ -120,8 +125,8 @@ function App() {
 
             {/* Settings Section */}
             <section className="p-4 bg-gray-200 border-y">
-                <div className="flex justify-between">
-                    <div className="flex items-center space-x-5">
+                <div className="ribbon">
+                    <div>
                         <select
                             value=""
                             disabled={selectedCountries.length >= 3}
@@ -158,10 +163,10 @@ function App() {
                             </select>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-5">
+                    <div>
                         <button onClick={exportCSV} className="bg-gray-500 text-white px-3 py-1">Export CSV</button>
 
-                        <button onClick={handleReset} className="bg-red-500 text-white px-3 py-1">Reset</button>
+                        <button onClick={handleReset} className="bg-red-500 text-white px-3 py-1" title="reset item counts">Reset</button>
                     </div>
                 </div>
             </section>
@@ -193,7 +198,7 @@ function App() {
                     <div className="overflow-auto max-h-[80vh] pb-4">
                         <table className="table_compare_1 min-w-full"><tbody>
                             <tr className="table_compare_1_header_1">
-                                <td rowSpan="2" className="w-[1%]"><LinkButton size={30} isLinked={unLinkedItems.length == 0}  onToggle={(isLinked) => {
+                                <td rowSpan="2" className="w-[1%]"><LockButton size={30} isLinked={unLinkedItems.length == 0}  onToggle={(isLinked) => {
                                     if (isLinked)
                                         setUnLinkedItems([]);
                                     else
@@ -212,7 +217,7 @@ function App() {
                             </tr>
                             {dataAgg.map(cat => (<React.Fragment key={cat.category}>
                                 <tr>
-                                    <td><LinkButton size={18} isLinked={!itemsPerCategory[cat.category].some(item => unLinkedItems.includes(item.name))} onToggle={(isLinked) => {
+                                    <td><LockButton size={18} isLinked={!itemsPerCategory[cat.category].some(item => unLinkedItems.includes(item.name))} onToggle={(isLinked) => {
                                         if (isLinked)
                                             setUnLinkedItems(unLinkedItems.filter(n => !itemsPerCategory[cat.category].map(p => p.name).includes(n)));
                                         else
@@ -230,13 +235,13 @@ function App() {
                                 </tr>
                                 {!collapsedCategories.includes(cat.category) && 
                                     itemsPerCategory[cat.category].map(item => (<tr key={item.name}>
-                                        <td><LinkButton isLinked={!unLinkedItems.includes(item.name)} onToggle={(isLinked) => {
+                                        <td><LockButton isLinked={!unLinkedItems.includes(item.name)} onToggle={(isLinked) => {
                                             if (isLinked)
                                                 setUnLinkedItems(unLinkedItems.filter(n => n !== item.name));
                                             else
                                                 setUnLinkedItems([...unLinkedItems, item.name]);
                                         }}/></td>
-                                        <td style={{"textAlign":"left"}}>{item.name}</td>
+                                        <td style={{"textAlign":"left"}}><ListButton onClick={() => setSelectedItem(item.name)} />{item.name}</td>
                                         <td dangerouslySetInnerHTML={{ __html: item.unit }}/>
                                         {selectedCountries.map(country => (<React.Fragment key={country}>
                                             <td><input type="number" step="1" min="0" max="100"
@@ -277,9 +282,9 @@ function App() {
                                     {formatCurrency(sumsPerCountry[country])}
                                 </td>))}
                             </tr>
-                            {pieCategoriesActive.map(category => (<tr key={category.name} style={{cursor:"pointer"}} onMouseEnter={() => setRowHighlightedCategory(category.name)} onMouseLeave={() => setRowHighlightedCategory(null)} onMouseUp={() => setSelectedCategory(category.name)}>
-                                <td style={rowHighlightedCategory==category.name?{textAlign:"left",fontWeight:"bold",backgroundColor:"#EFEFEF"}:{textAlign:"left"}}>{category.name}</td>
-                                {selectedCountries.map(country => (<td key={country} style={rowHighlightedCategory==category.name?{backgroundColor:"#EFEFEF"}:{}}>
+                            {pieCategoriesActive.map(category => (<tr key={category.name}>
+                                <td style={{textAlign:"left"}}>{category.name}</td>
+                                {selectedCountries.map(country => (<td key={country}>
                                     {formatCurrency(pieData[country][category.idx].sum)}
                                 </td>))}
                             </tr>))}
@@ -287,7 +292,7 @@ function App() {
                                 <td rowSpan="2" className="p-0 align-top">
                                     <div className="flex flex-col items-start px-4 pt-2 pb-2">
                                         {pieCategoriesActive.map(category => (
-                                            <div key={category.name} style={{cursor:"pointer"}} className="flex items-center gap-1" onMouseEnter={() => setPieHighlightedCategory(category.name)} onMouseLeave={() => setPieHighlightedCategory(null)} onMouseUp={() => setSelectedCategory(category.name)}>
+                                            <div key={category.name} className="flex items-center gap-1">
                                                 <div 
                                                     className="w-4 h-4 rounded" 
                                                     style={{ backgroundColor: pieColors[category.idx] }}
@@ -308,7 +313,6 @@ function App() {
                                         colors={pieColors}
                                         onBarEnter={setPieHighlightedCategory}
                                         onBarLeave={() => setPieHighlightedCategory(null)}
-                                        onBarClick={c => setSelectedCategory(c)}
                                     />
                                 </td>))}
                             </tr>
@@ -319,7 +323,6 @@ function App() {
                                         colors={pieColors}
                                         onPieEnter={setPieHighlightedCategory}
                                         onPieLeave={() => setPieHighlightedCategory(null)}
-                                        onPieClick={c => setSelectedCategory(c)}
                                     />
                                 </td>))}
                             </tr>
@@ -328,58 +331,45 @@ function App() {
                 </div>
             </section>)}
 
-            {/* Items Breakdown Section */}
-            {(selectedCountries.length > 0 && pieSum > 0 && !selectedCategory) && (<h1 className="mt-20 w-full text-center text-2xl font-semibold mb-20">Select a category to see items!</h1>)}
-            {(selectedCountries.length > 0 && pieSum > 0 && selectedCategory) && (<section className="p-4">
-                <div className="max-w-7xl mx-auto w-full">
-                    <div className="overflow-auto pb-4">
-                        <table className="table_compare_1 min-w-full" style={{tableLayout:"fixed"}}><tbody>
-                            <tr className="table_compare_1_header_1"><td colSpan={selectedCountries.length*3}>{selectedCategory}</td></tr>
-                            <tr className="table_compare_1_header_1">{selectedCountries.map(country => (<td key={country} colSpan={3}>{country}</td>))}</tr>
-                            <tr className="table_compare_1_header_2">{selectedCountries.map(country => (<React.Fragment key={country}><td style={{width:`${100/selectedCountries.length}%`}}>name</td><td className="w-px">price</td><td className="w-px">vendor</td></React.Fragment>))}</tr>
-                            {itemsActive.map(item => (<React.Fragment key={item}>
-                                <tr>
-                                    <td className="table_compare_1_category" colSpan={selectedCountries.length*3}>
-                                        <CollapseButton isOpen={openedItems.includes(item)} onToggle={(isOpen) => {
-                                            if (isOpen)
-                                                setOpenedItems([...openedItems, item]);
-                                            else
-                                                setOpenedItems(openedItems.filter(cc => cc !== item));
-                                        }}/>
-                                        &nbsp;{item}
-                                    </td>
-                                </tr>
-                                {(openedItems.includes(item)) &&
-                                    [...Array(maxLinkCountPerItem[item])].map((_, idx) => (<tr key={idx}>
-                                        {selectedCountries.map(country => (<React.Fragment key={country}>
-                                            {(linksPerCountry[country][item].items.length > idx) ? (<React.Fragment>
-                                                <td className="link_cell"><a className="item_link" target="_blank" href={linksPerCountry[country][item].items[idx].link}>{linksPerCountry[country][item].items[idx].name}</a></td>
-                                                <td style={{"textAlign":"right"}}>{formatCurrency(linksPerCountry[country][item].items[idx].price)}</td>
-                                                <td style={{"textAlign":"right"}}>{linksPerCountry[country][item].items[idx].vendor}</td>
-                                            </React.Fragment>) : (<React.Fragment><td/><td/><td/></React.Fragment>)}
-                                        </React.Fragment>))}
-                                    </tr>))
-                                }
-                            </React.Fragment>))}
-                        </tbody></table>
-                    </div>
-                </div>
-            </section>)}
-
             {/* Footer */}
-            <footer className="flex justify-between p-4 bg-gray-400">
-                <div className="flex items-center space-x-9">
-                    <p className="max-w-xs break-words text-xs text-justify">This site does not collect, store, or share any personal user data. We don't use cookies or trackers.</p>
-                    <a target="_blank" href="https://github.com/nlevi-dev/PriceComparator?tab=Apache-2.0-1-ov-file">Apache-2.0 License</a>
+            <footer className="ribbon p-4 bg-gray-400">
+                <div>
+                    <p style={{"whiteSpace":"wrap","maxWidth":"35vw","minWidth":"20em"}} className="break-words text-xs text-justify">This site does not collect, store, or share any personal user data. We don't use cookies or trackers.</p>
                 </div>
-                <div className="flex items-center space-x-4">
-                    <p>Contacts: </p>
+                <div>
+                    <a target="_blank" href="https://github.com/nlevi-dev/PriceComparator?tab=Apache-2.0-1-ov-file">Apache-2.0 License</a>
                     <a target="_blank" href="https://github.com/nlevi-dev/PriceComparator">GitHub</a>
                     <a target="_blank" href="https://www.linkedin.com/in/nlevi-dev/">LinkedIn</a>
                 </div>
             </footer>
            
         </div>
-    );
+
+        {/* Items Link Section */}
+        {(selectedItem) && (<div className="item_popup" onClick={() => setSelectedItem(null)}><div onClick={(event) => event.stopPropagation()}>
+            <div className="max-w-7xl mx-auto w-full h-full flex flex-col">
+                <div className="flex-none flex flex-row justify-end"><CloseButton size={35} style={{"marginBottom":"0.5em"}} onClick={() => setSelectedItem(null)} /></div>
+                <div className="grow overflow-auto min-h-0">
+                    <div className="pb-4">
+                        <table className="table_compare_1 min-w-full" style={{tableLayout:"fixed"}}><tbody>
+                            <tr className="table_compare_1_header_1"><td colSpan={selectedCountries.length*3}>{selectedItem}</td></tr>
+                            <tr className="table_compare_1_header_1">{selectedCountries.map(country => (<td key={country} colSpan={3}>{country}</td>))}</tr>
+                            <tr className="table_compare_1_header_2">{selectedCountries.map(country => (<React.Fragment key={country}><td style={{width:`${100/selectedCountries.length}%`}}>name</td><td className="w-px">price</td><td className="w-px">vendor</td></React.Fragment>))}</tr>
+                            {[...Array(maxLinkCount)].map((_, idx) => (<tr key={idx}>
+                                    {selectedCountries.map(country => (<React.Fragment key={country}>
+                                        {(linksPerCountry[country].items.length > idx) ? (<React.Fragment>
+                                            <td className="link_cell"><a className="item_link" target="_blank" href={linksPerCountry[country].items[idx].link}>{linksPerCountry[country].items[idx].name}</a></td>
+                                            <td style={{"textAlign":"right"}}>{formatCurrency(linksPerCountry[country].items[idx].price)}</td>
+                                            <td style={{"textAlign":"right","whiteSpace":"nowrap"}}>{linksPerCountry[country].items[idx].vendor}</td>
+                                        </React.Fragment>) : (<React.Fragment><td/><td/><td/></React.Fragment>)}
+                                    </React.Fragment>))}
+                                </tr>))
+                            }
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div></div>)}
+    </React.Fragment>);
 }
 export default App;
