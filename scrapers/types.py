@@ -470,9 +470,9 @@ lookup_filters = {
     Item.EATING_OUT: {
         Unit.NONE: Unit.EACH,
         Category.NONE: Category.RECREATION,
-        Lang.EN: (),
-        Lang.HU: (),
-        Lang.DK: (),
+        Lang.EN: ([[""]],[]),
+        Lang.HU: ([[""]],[]),
+        Lang.DK: ([[""]],[]),
     },
     Item.FAST_FOOD: {
         Unit.NONE: Unit.EACH,

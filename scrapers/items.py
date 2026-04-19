@@ -172,6 +172,9 @@ def read_csv(path):
 ENUM_COLS_RAW = ["unit", "country", "language", "currency"]
 def read_csv_raw(path):
     df = pd.read_csv(path)
-    df[ENUM_COLS_RAW] = df[ENUM_COLS_RAW].map(parse_enum)
-    df["categories"] = df["categories"].apply(lambda x: [parse_enum(c[:c.rfind(":")]) for c in re.sub(r'[\<\>\[\]]', "", x).split(", ")])
+    cols = list(set(ENUM_COLS_RAW).intersection(set(df.columns)))
+    if len(cols) > 0:
+        df[cols] = df[cols].map(parse_enum)
+    if "categories" in df.columns:
+        df["categories"] = df["categories"].apply(lambda x: [parse_enum(c[:c.rfind(":")]) for c in re.sub(r'[\<\>\[\]]', "", x).split(", ")])
     return df

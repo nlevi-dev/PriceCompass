@@ -32,7 +32,11 @@ def retrieve_cache(url, use_cache = True, cache_time = None):
     if use_cache and cache_path.exists():
         file_age = time.time() - cache_path.stat().st_mtime
         if file_age < cache_time * 3600:
-            return read_csv_raw(cache_path)
+            try:
+                ret = read_csv_raw(cache_path)
+                return ret
+            except:
+                return None
     return None
 
 def save_cache(url, df):
