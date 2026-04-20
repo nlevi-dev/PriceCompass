@@ -26,6 +26,7 @@ def test_translations(enums, language):
 groceries = [Category.MEAT_AND_FISH,Category.FRUITS_AND_VEGETABLES,Category.DAIRY_AND_EGGS,Category.BAKERY,Category.DRINKS,Category.PANTRY_STAPLES,Category.HYGIENE_PRODUCTS]
 gym = [Item.GYM_SINGLE_ENTRANCE,Item.GYM_MONTHLY_MEMBERSHIP,Item.GYM_YEARLY_MEMBERSHIP]
 climbing_gym = [Item.CLIMBING_GYM_SINGLE_ENTRANCE,Item.CLIMBING_GYM_MONTHLY_MEMBERSHIP,Item.CLIMBING_GYM_YEARLY_MEMBERSHIP]
+food = [Item.EATING_OUT,Item.FAST_FOOD]
 
 testdata = [
     ("hungary/auchan.py",groceries),
@@ -38,6 +39,7 @@ testdata = [
     ("hungary/monkeyboulder.py",climbing_gym),
     ("hungary/gravityboulder.py",climbing_gym),
     ("hungary/flowboulder.py",climbing_gym),
+    ("hungary/wolt.py",food),
     ("denmark/bilka.py",groceries),
     ("denmark/nemlig.py",groceries),
     ("denmark/puregym.py",[Item.GYM_MONTHLY_MEMBERSHIP,Item.GYM_YEARLY_MEMBERSHIP]),
@@ -46,6 +48,7 @@ testdata = [
     ("denmark/betaboulders.py",climbing_gym),
     ("denmark/bisonboulders.py",climbing_gym),
     ("denmark/boulders.py",[Item.CLIMBING_GYM_SINGLE_ENTRANCE,Item.CLIMBING_GYM_MONTHLY_MEMBERSHIP]),
+    ("denmark/justeat.py",food),
 ]
 @pytest.mark.parametrize("module_path,categories", testdata)
 def test_sources(module_path, categories):
@@ -68,9 +71,11 @@ testdata = [
     (Country.HU, ["hungary/tesco.py","hungary/kifli.py","hungary/auchan.py"],groceries),
     (Country.HU, ["hungary/peakgym.py","hungary/flexgym.py","hungary/nemesfitness.py","hungary/4pfitness.py"],gym),
     (Country.HU, ["hungary/monkeyboulder.py","hungary/gravityboulder.py","hungary/flowboulder.py"],climbing_gym),
+    (Country.HU, ["hungary/wolt.py"],food),
     (Country.DK, ["denmark/bilka.py","denmark/nemlig.py"],groceries),
-    (Country.HU, ["denmark/puregym.py","denmark/fitnessx.py","denmark/vesterbronxgym.py"],gym),
-    (Country.HU, ["denmark/betaboulders.py","denmark/bisonboulders.py","denmark/boulders.py"],climbing_gym),
+    (Country.DK, ["denmark/puregym.py","denmark/fitnessx.py","denmark/vesterbronxgym.py"],gym),
+    (Country.DK, ["denmark/betaboulders.py","denmark/bisonboulders.py","denmark/boulders.py"],climbing_gym),
+    (Country.DK, ["denmark/justeat.py"],food),
 ]
 @pytest.mark.parametrize("country,module_paths,categories", testdata)
 def test_country(country, module_paths, categories):

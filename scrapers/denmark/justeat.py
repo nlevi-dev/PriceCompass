@@ -32,10 +32,6 @@ SECTION_EXCLUDE = [
 PRICE_MIN = 50.0
 PRICE_MAX = 500.0
 
-def is_main_section(heading):
-    h = heading.lower()
-    return not any(k in h for k in SECTION_EXCLUDE)
-
 def get_restaurant_links(use_cache=True, cache_time=None):
     cache = retrieve_cache(LISTING_URL, use_cache, cache_time)
     if cache is not None:
@@ -59,14 +55,11 @@ def scrape_restaurant(url, use_cache=True, cache_time=None):
         return cache
     page = BaseScraper(url, scrolling=True, user_agent=None).get_page()
     soup = BeautifulSoup(page, "lxml")
-    vendor_name = url.rstrip("/").split("/")[-1]
+    vendor_name = soup.find("h1", attrs={"data-qa":"heading"}).get_text(strip=True).lower()
     items = []
     for sec in soup.find_all("section", class_="item-category-style_section__XhoNI"):
-        h2 = sec.find("h2")
-        if not h2:
-            continue
-        heading = h2.get_text(strip=True)
-        if not is_main_section(heading):
+        cat = sec.find("h2", attrs={"data-qa":"heading"}).get_text(strip=True).lower()
+        if any(k in cat for k in SECTION_EXCLUDE):
             continue
         ul = sec.find("ul", class_="item-list_list-wrapper__31Wbo")
         if not ul:
@@ -82,7 +75,7 @@ def scrape_restaurant(url, use_cache=True, cache_time=None):
             price = float(m.group(1).replace(",", "."))
             if not (PRICE_MIN <= price <= PRICE_MAX):
                 continue
-            items.append({
+            item ={
                 "price": price,
                 "unit": Unit.EACH,
                 "country": Country.DK,
@@ -91,8 +84,11 @@ def scrape_restaurant(url, use_cache=True, cache_time=None):
                 "vendor": VENDOR,
                 "link": url,
                 "categories": [Item.EATING_OUT],
-                "original_name": "%s - %s" % (vendor_name, name_node.get_text(strip=True).lower()),
-            })
+                "original_name": "%s - %s - %s" % (vendor_name, cat, name_node.get_text(strip=True).lower()),
+            }
+            items.append(item.copy())
+            item["categories"] = [Item.FAST_FOOD]
+            items.append(item.copy())
     df = pd.DataFrame(items)
     save_cache(url, df)
     return df
@@ -112,7 +108,9 @@ def get_items(use_cache=True, cache_time=None):
     df = pd.concat(dfs, ignore_index=True)
     if len(df) == 0:
         raise Exception(f"No items from {VENDOR}!")
-    df = df.drop_duplicates("original_name", keep="first", ignore_index=True)
+    df["tmp"] = df["categories"].apply(lambda x: str(x))
+    df = df.drop_duplicates(["original_name", "tmp"], keep="first", ignore_index=True)
+    df = df.drop(columns=["tmp"])
     df = raw_items_to_df(df)
     return df
 

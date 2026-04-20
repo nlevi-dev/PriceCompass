@@ -477,9 +477,9 @@ lookup_filters = {
     Item.FAST_FOOD: {
         Unit.NONE: Unit.EACH,
         Category.NONE: Category.RECREATION,
-        Lang.EN: (),
-        Lang.HU: (),
-        Lang.DK: (),
+        Lang.EN: ([["mcdonald"]],[]),
+        Lang.HU: ([["mcdonald"]],[]),
+        Lang.DK: ([["mcdonald"]],[]),
     },
     Item.MOVIE_TICKET: {
         Unit.NONE: Unit.EACH,

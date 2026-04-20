@@ -10,6 +10,7 @@ from urllib.robotparser import RobotFileParser
 from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
 from playwright_stealth import Stealth
+import pandas as pd
 
 from scrapers.items import read_csv_raw
 
@@ -37,6 +38,7 @@ def retrieve_cache(url, use_cache = True, cache_time = None):
                 return ret
             except:
                 return None
+                return pd.DataFrame()
     return None
 
 def save_cache(url, df):
