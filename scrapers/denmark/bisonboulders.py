@@ -74,8 +74,8 @@ def parse_item2(node, categories, url, place):
     names.append(node.find("div", attrs={"class":"fe-block fe-block-9818e66b7d5fc38e9a15"}).get_text(strip=True).lower())
     t = node.find("div", attrs={"class":"fe-block fe-block-yui_3_17_2_1_1758619848505_36496"}).get_text(strip=True).lower()
     prices = []
-    prices.append(node.find("div", attrs={"class":"fe-block fe-block-68d28f91afdb31b8877601ae"}).get_text(strip=True).lower())
-    prices.append(node.find("div", attrs={"class":"fe-block fe-block-2b997bbec459b509c5d8"}).get_text(strip=True).lower())
+    prices.append(node.find("div", attrs={"class":"fe-block fe-block-68d28f91afdb31b8877601ae"}).find("a").get_text(strip=True).lower())
+    prices.append(node.find("div", attrs={"class":"fe-block fe-block-2b997bbec459b509c5d8"}).find("a").get_text(strip=True).lower())
     for i in range(2):
         item = obj.copy()
         item["original_name"] = place+t+" "+names[i]+" subscription"

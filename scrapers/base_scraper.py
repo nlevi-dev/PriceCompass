@@ -54,6 +54,7 @@ class BaseScraper:
         post_init_action = None,
         post_scroll_action = None,
         headless = True,
+        timeout = 60,
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     ):
         self.url = url
@@ -63,6 +64,7 @@ class BaseScraper:
         self.cache_dir = Path(__file__).resolve().parent.parent/"cache"
         self.cache_dir.mkdir(exist_ok=True)
         self.headless = headless
+        self.timeout = timeout
         self.user_agent = user_agent
 
     def is_allowed_by_robots(self):
@@ -130,7 +132,7 @@ class BaseScraper:
             )
             page = context.new_page()
 
-            page.goto(self.url, timeout=60000)
+            page.goto(self.url, timeout=self.timeout * 1000)
 
             try:
                 page.wait_for_load_state("networkidle", timeout=5000)

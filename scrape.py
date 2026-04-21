@@ -62,6 +62,7 @@ if __name__ == "__main__":
     timestamp = datetime.now().strftime('%Y-%m-%d')
     filename_csv = timestamp + ".csv"
     filename_json = timestamp + ".json"
+    df = df[df["price"] > 0]
     df.to_csv(data_path/filename_csv, index=False)
     data = df_to_data(df)
     with open(data_path/filename_json, "w") as f:

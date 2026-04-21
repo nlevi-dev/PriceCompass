@@ -54,8 +54,15 @@ def visualize_full_float_range(M, E):
     plt.axvline(x=max_val, color='r', linestyle='--', alpha=0.5, label=f"Max Value (~{max_val:.1e})")
     plt.ylim(bottom=0)
     
+    plt.ticklabel_format(style="plain", axis="x")
+    plt.ticklabel_format(style="plain", axis="y")
+    maxX = 1000
+    plt.xlim(0, maxX)
+    max_step_in_range = max([step for step, val in zip(y, x) if val <= maxX])
+    plt.ylim(bottom=0, top=max_step_in_range * 1.1)
+
     plt.legend()
     plt.tight_layout()
     plt.show()
 
-visualize_full_float_range(M=6, E=4)
+visualize_full_float_range(M=13, E=6)
