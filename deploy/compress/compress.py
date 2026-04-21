@@ -1,8 +1,10 @@
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(root))
 
 import io
+import json
 import math
 import gzip
 import zipfile
@@ -10,40 +12,11 @@ import zipfile
 import pandas as pd
 
 from scrapers.types import *
+from scrapers.items import read_csv
 from scrapers.exchange import CurrencyExchanger
 from scrapers.items import ENUM_COLS
 
 exchanger = CurrencyExchanger()
-
-def generate_translations(lanuages=[Lang.EN]):
-    # {
-    #     "translations": {
-    #         "EN": {
-    #             "countries_raw": [],
-    #             "categories_raw": [],
-    #             "items_raw": [],
-    #             "aggregate_raw": [],
-    #             "countries_order": [],
-    #             "categories_order": [],
-    #             "items_order": [],
-    #             "category_map": {},
-    #         }
-    #     }
-    # }
-    data = {}
-    translations = {}
-    for lang in lanuages:
-        translation = {}
-        translation["countries_raw"] = [enum_to_string(c, lang) for c in list(Country)[1:]]
-        translation["categories_raw"] = [enum_to_string(c, lang) for c in list(Category)[1:]]
-        translation["items_raw"] = [enum_to_string(c, lang) for c in list(Item)]
-        translation["aggregate_raw"] = [enum_to_string(c, lang) for c in list(Aggregate)]
-        translation["countries_order"] = sorted(translation["countries_raw"])
-        translation["categories_order"] = translation["categories_raw"]
-        translation["items_order"] = translation["items_order"]
-        translations[lang.name] = translation
-    data["translations"] = translations
-    return data
 
 def bits_to_int(bits, from_bit, length):
     shifted = bits >> from_bit
@@ -111,6 +84,8 @@ def float_to_bits(number, len_mantissa, len_exponent):
 #  8  255
 #  9  511
 # 10 1023
+
+# used for serializing the daily data
 BITS_ITEM_LEN = 8      # bit length of a serialized item, limits the max unique items possible
 BITS_COUNTRY_LEN = 5   # bit length of a serialized country, limits the max unique countries possible
 BITS_PRICES_CNT = 10   # bit length of price count per item_country, limits the max entries for an item_country
@@ -120,14 +95,80 @@ BITS_PRICES_CNT_EXCEPTIONS = {
 EXCHANGE_MANTISSA = 24
 EXCHANGE_EXPONENT = 8
 PRICE_MANTISSA = 13
-PRICE_EXPONENT = 6
+PRICE_EXPONENT = 7
+
+# used by frontend url encoding
+BITS_AGG_LEN = 4       # bit length of a serialized aggregation method, limits the max unique agg methods possible
+BITS_CATEGORY_LEN = 5  # bit length of a serialized category, limits the max unique categories possible
+#BITS_ITEMS_LEN = 8
+BITS_COUNTRY_CNT = 3   # bit length of selected countries counter, limits the max selected countries possible
+#BITS_COUNTRY_LEN = 5
+BITS_COUNT_LEN = 9     # bit length of item count, limits the max added items to the cart
+DECIMAL2EDGE = 2       # custom dynamic fixed representation, below this number 2 decimal places are stored
+DECIMAL1EDGE = 20      # custom dynamic fixed representation, below this number 1 decimal place is stored
+
+# helpers
 EXCHANGE_LEN = EXCHANGE_MANTISSA + EXCHANGE_EXPONENT
 PRICE_LEN = PRICE_MANTISSA + PRICE_EXPONENT
-BITS_COUNTRY_CNT = BITS_COUNTRY_LEN
 MAX_ITEMS = (2 ** BITS_ITEM_LEN) - 1
 MAX_COUNTRIES = (2 ** BITS_COUNTRY_LEN) - 1
 MAX_COUNTRY_ITEM_COMBINATIONS = MAX_ITEMS * MAX_COUNTRIES
 BITS_COUNTRY_ITEM_CNT = math.ceil(math.log2(MAX_COUNTRY_ITEM_COMBINATIONS + 1))
+
+def generate_settings(valid_date_ranges=[], lanuages=[Lang.EN]):
+    # {
+    #     "settings": {},
+    #     "category_map": {},
+    #     "unit_map": {},
+    #     "valid_date_ranges": [],
+    #     "translations": {
+    #         "EN": {
+    #             "countries_raw": [],
+    #             "categories_raw": [],
+    #             "items_raw": [],
+    #             "aggregate_raw": [],
+    #             "units_raw": [],
+    #             "countries_order": [],
+    #             "categories_order": [],
+    #             "items_order": [],
+    #         }
+    #     }
+    # }
+    data = {}
+    data["settings"] = {
+        "BITS_ITEM_LEN": BITS_ITEM_LEN,
+        "BITS_COUNTRY_LEN": BITS_COUNTRY_LEN,
+        "BITS_PRICES_CNT": BITS_PRICES_CNT,
+        "BITS_PRICES_CNT_EXCEPTIONS": {(key.value-1):BITS_PRICES_CNT_EXCEPTIONS[key] for key in BITS_PRICES_CNT_EXCEPTIONS},
+        "EXCHANGE_MANTISSA": EXCHANGE_MANTISSA,
+        "EXCHANGE_EXPONENT": EXCHANGE_EXPONENT,
+        "PRICE_MANTISSA": PRICE_MANTISSA,
+        "PRICE_EXPONENT": PRICE_EXPONENT,
+        "BITS_AGG_LEN": BITS_AGG_LEN,
+        "BITS_CATEGORY_LEN": BITS_CATEGORY_LEN,
+        "BITS_COUNTRY_CNT": BITS_COUNTRY_CNT,
+        "BITS_COUNT_LEN": BITS_COUNT_LEN,
+        "DECIMAL2EDGE": DECIMAL2EDGE,
+        "DECIMAL1EDGE": DECIMAL1EDGE,
+    }
+    items = list(Item)
+    data["category_map"] = [lookup_filters[item][Category.NONE].value-2 for item in items]
+    data["unit_map"] = [lookup_filters[item][Unit.NONE].value-2 for item in items]
+    data["valid_date_ranges"] = valid_date_ranges
+    translations = {}
+    for lang in lanuages:
+        translation = {}
+        translation["countries_raw"] = [enum_to_string(c, lang) for c in list(Country)[1:]]
+        translation["categories_raw"] = [enum_to_string(c, lang) for c in list(Category)[1:]]
+        translation["items_raw"] = [enum_to_string(c, lang) for c in list(Item)]
+        translation["aggregate_raw"] = [enum_to_string(c, lang) for c in list(Aggregate)]
+        translation["units_raw"] = [enum_to_string(c, lang) for c in list(Unit)[1:]]
+        translation["countries_order"] = sorted(translation["countries_raw"])
+        translation["categories_order"] = translation["categories_raw"]
+        translation["items_order"] = translation["items_raw"]
+        translations[lang.name] = translation
+    data["translations"] = translations
+    return data
 
 def serialize_df_num(df):
     # country_count
@@ -147,7 +188,7 @@ def serialize_df_num(df):
 
     bits.append([int_to_bits(len(lookup_currency)), BITS_COUNTRY_CNT])
     for country in lookup_currency.keys():
-        bits.append([int_to_bits(country.value-1), BITS_COUNTRY_LEN])
+        bits.append([int_to_bits(country.value-2), BITS_COUNTRY_LEN])
         rate = exchanger.get_exchange_rate(lookup_currency[country], Currency.EUR)
         bits.append([float_to_bits(rate, EXCHANGE_MANTISSA, EXCHANGE_EXPONENT), EXCHANGE_LEN])
     
@@ -172,7 +213,7 @@ def serialize_df_num(df):
             item_country_data = item_country_data.head(max_prices)
         
         bits.append([int_to_bits(item.value-1), BITS_ITEM_LEN])
-        bits.append([int_to_bits(country.value-1), BITS_COUNTRY_LEN])
+        bits.append([int_to_bits(country.value-2), BITS_COUNTRY_LEN])
         
         bits.append([int_to_bits(price_count), variable_BITS_PRICES_CNT])
         
@@ -190,23 +231,23 @@ def serialize_df_num(df):
     df_reordered = pd.DataFrame(reordered_rows).reset_index(drop=True)
     return total_bits.to_bytes(total_bytes, byteorder="little"), df_reordered
 
-def serialize_df_txt(df, compression="zip"):
+def serialize_df_txt(df, compression="gzip"):
     # vendor
     # link
     # original_name
     csv_data = df[["vendor", "link", "original_name"]].to_csv(index=False, header=False)
     
-    if compression in ["zip"]:
+    if compression == "zip":
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
             zip_file.writestr("data.csv", csv_data)
         return zip_buffer.getvalue()
-    elif compression in ["fflate", "gzip"]:
+    elif compression == "gzip":
         return gzip.compress(csv_data.encode("utf-8"))
     else:
         return csv_data.encode("utf-8")
 
-def serialize_df(df, compression="zip"):
+def serialize_df(df, compression="gzip"):
     binary_data, df_reordered = serialize_df_num(df)
     txt_data = serialize_df_txt(df_reordered, compression)
 
@@ -226,7 +267,7 @@ def deserialize_df_num(data):
         pos += BITS_COUNTRY_LEN
         rate = bits_to_float(bits, pos, EXCHANGE_MANTISSA, EXCHANGE_EXPONENT)
         pos += EXCHANGE_LEN
-        exchange_rates[Country(country_idx + 1)] = rate
+        exchange_rates[Country(country_idx + 2)] = rate
 
     combination_count = bits_to_int(bits, pos, BITS_COUNTRY_ITEM_CNT)
     pos += BITS_COUNTRY_ITEM_CNT
@@ -239,7 +280,7 @@ def deserialize_df_num(data):
         pos += BITS_COUNTRY_LEN
 
         item = Item(item_idx + 1)
-        country = Country(country_idx + 1)
+        country = Country(country_idx + 2)
 
         variable_BITS_PRICES_CNT = BITS_PRICES_CNT_EXCEPTIONS.get(item, BITS_PRICES_CNT)
         price_count = bits_to_int(bits, pos, variable_BITS_PRICES_CNT)
@@ -253,17 +294,17 @@ def deserialize_df_num(data):
     num_bytes_used = (pos + 7) // 8
     return exchange_rates, rows, num_bytes_used
 
-def deserialize_df_txt(data, compression="zip"):
-    if compression in ["zip"]:
+def deserialize_df_txt(data, compression="gzip"):
+    if compression == "zip":
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
             csv_data = zf.read("data.csv").decode("utf-8")
-    elif compression in ["fflate", "gzip"]:
+    elif compression == "gzip":
         csv_data = gzip.decompress(data).decode("utf-8")
     else:
         csv_data = data.decode("utf-8")
     return pd.read_csv(io.StringIO(csv_data), header=None, names=["vendor", "link", "original_name"])
 
-def deserialize_df(data, compression="zip"):
+def deserialize_df(data, compression="gzip"):
     exchange_rates, rows, num_bytes_used = deserialize_df_num(data)
     txt_df = deserialize_df_txt(data[num_bytes_used:], compression)
 
@@ -337,3 +378,80 @@ def compare_by_rows(df1, df2, float_tolerance=[(1, 1e-4), (10, 1e-3), (100, 1e-2
                 print(f"  df2: {row2.to_dict()}")
     
     return are_equal
+
+def deserialize_bin_to_csv(bin_path, compression=None):
+    with open(bin_path, "rb") as f:
+        byte_data = f.read()
+    df = deserialize_df(byte_data, compression=compression)[1]
+    csv_path = bin_path[:bin_path.rfind(".")]+".csv"
+    df.to_csv(csv_path, index=False)
+
+def serialize_csv_to_bin(csv_path, compression=None):
+    df = read_csv(csv_path)
+    byte_data = serialize_df(df, compression=compression)
+    bin_path = csv_path[:csv_path.rfind(".")]+".bin"
+    with open(bin_path, "wb") as f:
+        f.write(byte_data)
+
+def get_date_ranges():
+    deploy_data_dir = root / "deploy" / "index" / "data"
+    
+    bin_files = list(deploy_data_dir.glob("*.bin"))
+    dates = []
+    
+    for bin_file in bin_files:
+        filename = bin_file.stem
+        try:
+            date_obj = pd.to_datetime(filename, format='%Y-%m-%d')
+            dates.append(date_obj)
+        except ValueError:
+            continue
+    dates.sort()
+    if not dates:
+        return []
+    
+    date_ranges = []
+    range_start = dates[0]
+    range_end = dates[0]
+    for i in range(1, len(dates)):
+        if dates[i] == range_end + pd.Timedelta(days=1):
+            range_end = dates[i]
+        else:
+            date_ranges.append([range_start.strftime('%Y-%m-%d'), range_end.strftime('%Y-%m-%d')])
+            range_start = dates[i]
+            range_end = dates[i]
+    date_ranges.append([range_start.strftime('%Y-%m-%d'), range_end.strftime('%Y-%m-%d')])
+    
+    return date_ranges   
+
+if __name__ == "__main__":
+    data_dir = root / "data"
+    deploy_data_dir = root / "deploy" / "index" / "data"
+    deploy_data_dir.mkdir(parents=True, exist_ok=True)
+
+    csv_files = list(data_dir.glob("*.csv"))
+
+    for csv_file in csv_files:
+        df = read_csv(csv_file)
+        byte_data = serialize_df(df, compression="gzip")
+        bin_filename = csv_file.stem + ".bin"
+        bin_path = deploy_data_dir / bin_filename
+        with open(bin_path, "wb") as f:
+            f.write(byte_data)
+    
+    settings_data = generate_settings(valid_date_ranges=get_date_ranges())
+    settings_path = root / "frontend" / "src" / "settings.json"
+    settings_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if settings_path.exists():
+        with open(settings_path, "r") as f:
+            existing_settings = json.load(f)
+        
+        existing_str = json.dumps(existing_settings["settings"], sort_keys=True)
+        new_str = json.dumps(settings_data["settings"], sort_keys=True)
+        
+        if existing_str != new_str:
+            print(f"WARNING: Serialization settings have changed! Existing settings in {settings_path} differ from newly generated settings.")
+  
+    with open(settings_path, "w") as f:
+        json.dump(settings_data, f, indent=4)   

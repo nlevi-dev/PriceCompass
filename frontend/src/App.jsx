@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import CollapseButton from './components/CollapseButton';
 import LockButton from './components/LockButton';
 import ListButton from './components/ListButton';
@@ -7,82 +7,116 @@ import PieChart, { generateColors } from './components/PieChart';
 import BarChart from './components/BarChart';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useQueryState } from './hooks/useQueryState';
-import { parseData, filterData, aggregateData, toCsv, toPieData, toItemData } from './utils/dataParser';
-import { stateManage } from './utils/querySerializer';
-import rawData from './data.json';
+import { parseData, filterData, aggregateData, toCsv, toPieData, toItemData } from './utils/data';
+import { stateManage, deserializeBin } from './utils/serialize';
+import settings from './settings.json';
 
 function App() {
-    const [language, setLanguage] = useLocalStorage('lang', 'EN');
-    const [state, setState] = useQueryState('s', '', false);
+    const [language, setLanguage] = useQueryState("lang", "EN", false);
+    const [rawDate, setRawDate] = useQueryState("date", "latest", false);
+    const [state, setState] = useQueryState("s", "", false);
+    const date = rawDate === "latest" ? settings.valid_date_ranges.at(-1).at(-1) : rawDate;
 
-    const [
-        languages,
-        date,
-        countries,
-        exchange,
-        itemsPerCategory,
-        itemsAll,
-        data,
-        countriesMap,
-        categoriesMap,
-        aggregateMap,
-        itemsMap,
-    ] = useMemo(() => parseData(rawData, language), [language]);
-
-    const [
-        aggMethod,
-        collapsedCategories,
-        unLinkedItems,
-        selectedCountries,
-        itemCounts,
-        selectedItem,
-        serializeState,
-    ] = stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap);
-
-    const [ dataFiltered, exchangeFiltered ] = useMemo(() => filterData(data, exchange, selectedCountries), [language, selectedCountries]);
-    const dataAgg = useMemo(() => aggregateData(dataFiltered, aggregateMap.findIndex(a => a === aggMethod)), [language, selectedCountries, aggMethod]);
-
-    const exportCSV = () => {
-        const csvString = toCsv(data);
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `${date}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
-
-    const handleReset = () => {
-        setState(serializeState(aggMethod, [], [], selectedCountries, {}, selectedItem));
-    };
-
-    const formatCurrency = (currency) => {
-        return currency.toFixed(2);
-    }
-
-    const [ pieSum, pieData, sumsPerCountry, maxPerCountry, pieCategoriesActive ] = toPieData(dataAgg, itemCounts, selectedCountries, categoriesMap);
-
-    const pieColors = useMemo(() => generateColors(categoriesMap.length), [categoriesMap.length]);
-    const [pieHighlightedCategory, setPieHighlightedCategory] = useState(null);
+    const [binData, setBinData] = useState(new ArrayBuffer());
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`data/${date}.bin`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status}`);
+                }
+                const arrayBuffer = await response.arrayBuffer();
+                setBinData(arrayBuffer);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setBinData(null);
+            }
+        };
+        fetchData();
+    }, [date]);
     
-    const [ linksPerCountry, maxLinkCount ] = toItemData(dataAgg, itemCounts, selectedCountries, itemsMap, selectedItem);
+    const [
+        exchange,
+        data,
+    ] = useMemo(() => {
+        if (binData.byteLength === 0)
+            return [null, null];
+        return deserializeBin(binData, language);
+    }, [binData.byteLength, language]);
 
-    const setSelectedCountries = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, a, itemCounts, selectedItem));
-    const setCollapsedCategories = (a) => setState(serializeState(aggMethod, a, unLinkedItems, selectedCountries, itemCounts, selectedItem));
-    const setAggMethod = (a) => setState(serializeState(a, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedItem));
-    const setUnLinkedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, a, selectedCountries, itemCounts, selectedItem));
-    const setItemCounts = (a, countryChanged) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, a, selectedItem, countryChanged));
-    const setSelectedItem = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, a));
+    console.log(exchange);
+    console.log(data);
 
-    if (selectedItem) {
-        document.body.style.overflow = "hidden";
-    } else {
-        document.body.style.overflow = "unset";
-    }
+    // const [
+    //     languages,
+    //     date,
+    //     countries,
+    //     exchange,
+    //     itemsPerCategory,
+    //     itemsAll,
+    //     data,
+    //     countriesMap,
+    //     categoriesMap,
+    //     aggregateMap,
+    //     itemsMap,
+    // ] = useMemo(() => parseData(rawData, language), [language]);
+
+    // const [
+    //     aggMethod,
+    //     collapsedCategories,
+    //     unLinkedItems,
+    //     selectedCountries,
+    //     itemCounts,
+    //     selectedItem,
+    //     serializeState,
+    // ] = stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap);
+
+    // const [ dataFiltered, exchangeFiltered ] = useMemo(() => filterData(data, exchange, selectedCountries), [language, selectedCountries]);
+    // const dataAgg = useMemo(() => aggregateData(dataFiltered, aggregateMap.findIndex(a => a === aggMethod)), [language, selectedCountries, aggMethod]);
+
+    // const exportCSV = () => {
+    //     const csvString = toCsv(data);
+    //     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    //     const url = URL.createObjectURL(blob);
+    //     const link = document.createElement("a");
+    //     link.setAttribute("href", url);
+    //     link.setAttribute("download", `${date}.csv`);
+    //     link.style.visibility = "hidden";
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    //     URL.revokeObjectURL(url);
+    // };
+
+    // const handleReset = () => {
+    //     setState(serializeState(aggMethod, [], [], selectedCountries, {}, selectedItem));
+    // };
+
+    // const formatCurrency = (currency) => {
+    //     return currency.toFixed(2);
+    // }
+
+    // const [ pieSum, pieData, sumsPerCountry, maxPerCountry, pieCategoriesActive ] = toPieData(dataAgg, itemCounts, selectedCountries, categoriesMap);
+
+    // const pieColors = useMemo(() => generateColors(categoriesMap.length), [categoriesMap.length]);
+    // const [pieHighlightedCategory, setPieHighlightedCategory] = useState(null);
+    
+    // const [ linksPerCountry, maxLinkCount ] = toItemData(dataAgg, itemCounts, selectedCountries, itemsMap, selectedItem);
+
+    // const setSelectedCountries = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, a, itemCounts, selectedItem));
+    // const setCollapsedCategories = (a) => setState(serializeState(aggMethod, a, unLinkedItems, selectedCountries, itemCounts, selectedItem));
+    // const setAggMethod = (a) => setState(serializeState(a, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedItem));
+    // const setUnLinkedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, a, selectedCountries, itemCounts, selectedItem));
+    // const setItemCounts = (a, countryChanged) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, a, selectedItem, countryChanged));
+    // const setSelectedItem = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, a));
+
+    // if (selectedItem) {
+    //     document.body.style.overflow = "hidden";
+    // } else {
+    //     document.body.style.overflow = "unset";
+    // }
+
+    return (<div></div>);
 
     return (<React.Fragment>
         <div className="flex flex-col min-h-screen" style={{overflow:"hidden"}}>
