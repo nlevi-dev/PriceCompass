@@ -8,8 +8,9 @@ import BarChart from './components/BarChart';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useQueryState } from './hooks/useQueryState';
 import { filterData, aggregateData, toCsv, toPieData, toItemData } from './utils/data';
-import { stateManage, deserializeBin } from './utils/serialize';
+import { stateManage } from './utils/serialize';
 import settings from './settings.json';
+import { Loader2 } from 'lucide-react';
 
 function App() {
     const [language, setLanguage] = useQueryState("lang", "EN", false);
@@ -20,7 +21,6 @@ function App() {
 
     const [binData, setBinData] = useState(new ArrayBuffer());
     useEffect(() => {
-        console.log("downloading");
         const fetchData = async () => {
             try {
                 const response = await fetch(`data/${date}.bin`);
@@ -30,7 +30,6 @@ function App() {
                 } else {
                     const arrayBuffer = await response.arrayBuffer();
                     setBinData(arrayBuffer);
-                    console.log("downloading done");
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -41,15 +40,20 @@ function App() {
     }, [date]);
     
     // TODO break language extract to a separate step so gzip doesn't need to fire again
-    const [deserializedData, setDeserializedData] = useState([[],{},{},[],null,[],[],[],[]]);
+    const [deserializedData, setDeserializedData] = useState([[],{},{},[],null,[],[],["\u00A0\u00A0\u00A0\u00A0-\u00A0\u00A0\u00A0\u00A0"],[]]);
     useEffect(() => {
-        console.log("deserializing");
-        const deserializeData = async () => {
-            setDeserializedData(deserializeBin(binData, language));
-            console.log("deserializing done");
-        }
-        deserializeData();
-    }, [binData, language]);
+        if (!binData.byteLength) return;
+        const worker = new Worker(
+            new URL('./workers/deserialize.worker.js', import.meta.url),
+            { type: 'module' }
+        );
+        worker.onmessage = ({ data }) => {
+            setDeserializedData(data);
+            worker.terminate();
+        };
+        worker.postMessage({ binData, language }, [binData]);
+        return () => worker.terminate();
+    }, [binData.byteLength, language]);
     const [
         countries,
         exchange,
@@ -127,7 +131,12 @@ function App() {
                 <div>
                     <div className="flex items-center">
                         <p>Language:&nbsp;</p>
-                        <select value={language} onChange={e => setLanguage(e.target.value)}>
+                        <select
+                            disabled={selectedCountries.length >= 3 || data === null}
+                            style={data === null?{opacity:0.5,cursor:"wait"}:selectedCountries.length >= 3?{opacity:0.5,cursor:"not-allowed"}:{}}
+                            value={language}
+                            onChange={e => setLanguage(e.target.value)}
+                        >
                             {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
                         </select>
                     </div>
@@ -163,8 +172,7 @@ function App() {
                         <select
                             value=""
                             disabled={selectedCountries.length >= 3 || data === null}
-                            style={data === null?{cursor:"wait"}:selectedCountries.length >= 3?{opacity:0.5,cursor:"not-allowed"}:{}}
-                            title={selectedCountries.length >= 3?"Can't add more than 3 countries!":""}
+                            style={data === null?{opacity:0.5,cursor:"wait"}:selectedCountries.length >= 3?{opacity:0.5,cursor:"not-allowed"}:{}}
                             onChange={e => {
                                 const val = e.target.value;
                                 if (val) {
@@ -183,7 +191,7 @@ function App() {
                         </select>
 
                         <div className="flex gap-2">
-                            {selectedCountries.map(c => (
+                            {data !== null && selectedCountries.map(c => (
                                 <span key={c} className="bg-blue-200 px-2 py-1 rounded">
                                     {c} <button onClick={() => {setSelectedCountries(selectedCountries.filter(co => co !== c));}}>x</button>
                                 </span>
@@ -191,16 +199,32 @@ function App() {
                         </div>
                         
                         <div className="flex items-center">
-                            <p>Aggregation Mode:&nbsp;</p>
-                            <select value={aggMethod} onChange={e => setAggMethod(e.target.value)}>
+                            <p style={data === null?{opacity:0.5}:{}}>Aggregation Mode:&nbsp;</p>
+                            <select
+                                value={aggMethod}
+                                disabled={data === null}
+                                style={data === null?{opacity:0.5,cursor:"wait"}:{}}
+                                onChange={e => setAggMethod(e.target.value)}
+                            >
                                 {aggregateMap.map(a => (<option key={a} value={a}>{a}</option>))}
                             </select>
                         </div>
                     </div>
                     <div>
-                        <button onClick={exportCSV} className="bg-gray-500 text-white px-3 py-1">Export CSV</button>
+                        <button
+                            disabled={data === null}
+                            style={data === null?{opacity:0.5,cursor:"wait"}:{}}
+                            onClick={exportCSV}
+                            className="bg-gray-500 text-white px-3 py-1"
+                        >Export CSV</button>
 
-                        <button onClick={handleReset} className="bg-red-500 text-white px-3 py-1" title="reset item counts">Reset</button>
+                        <button
+                            disabled={data === null}
+                            style={data === null?{opacity:0.5,cursor:"wait"}:{}}
+                            onClick={handleReset}
+                            className="bg-red-500 text-white px-3 py-1"
+                            title="reset item counts"
+                        >Reset</button>
                     </div>
                 </div>
             </section>
@@ -226,7 +250,14 @@ function App() {
             </section>)}
 
             {/* Main Compare Section */}
-            {data === null && (<h1 className="mt-20 mb-20 flex-grow w-full text-center text-2xl font-semibold">Loading</h1>)}
+            {data === null && (
+                <div className="mt-20 mb-20 flex-grow w-full flex justify-center items-center">
+                    <div className="flex flex-col items-center">
+                        <Loader2 className="h-12 w-12 animate-spin mb-4 text-blue-500"/>
+                        <h1 className="text-2xl font-semibold">Loading...</h1>
+                    </div>
+                </div>
+            )}
             {data !== null && selectedCountries.length === 0 && (<h1 className="mt-20 mb-20 flex-grow w-full text-center text-2xl font-semibold">Add a country to start browsing items!</h1>)}
             {data !== null && selectedCountries.length > 0 && (<section className="p-4 flex-grow">
                 <div className="max-w-7xl mx-auto w-full">

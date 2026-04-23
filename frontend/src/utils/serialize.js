@@ -53,7 +53,7 @@ function customFixedToInt(num) {
 
 export function stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap) {
     if (countriesMap === null)
-        return ["",[],[],[],{},null,null];
+        return ["\u00A0\u00A0\u00A0\u00A0-\u00A0\u00A0\u00A0\u00A0",[],[],[],{},null,null];
     let aggMethod;
     let collapsedCategories;
     let unLinkedItems;
@@ -209,16 +209,19 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
             bits.push([intToBits(0), BITS_ITEM_LEN]);
             bits.push([intToBits(0), 1]);
         }
-        
+
         const uncompressed = appendBits(bits);
-        const compressed = compressBigIntSync(uncompressed);
         const uncompressedLen = uncompressed.toString(2).length;
-        const compressedLen = compressed.toString(2).length;
-        const diff = uncompressedLen - compressedLen;
-        if (diff < 0)
-            return bitsToBaseN(appendBits([[0,1],[uncompressed,uncompressedLen]]));
-        else
-            return bitsToBaseN(appendBits([[1,1],[compressed,compressedLen]]));
+        return bitsToBaseN(appendBits([[0,1],[uncompressed,uncompressedLen]]));
+        // const uncompressed = appendBits(bits);
+        // const compressed = compressBigIntSync(uncompressed);
+        // const uncompressedLen = uncompressed.toString(2).length;
+        // const compressedLen = compressed.toString(2).length;
+        // const diff = uncompressedLen - compressedLen;
+        // if (diff < 0)
+        //     return bitsToBaseN(appendBits([[0,1],[uncompressed,uncompressedLen]]));
+        // else
+        //     return bitsToBaseN(appendBits([[1,1],[compressed,compressedLen]]));
     };
 
     return [
@@ -234,7 +237,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
 
 export function deserializeBin(arrayBuffer, lang="EN") {
     if (arrayBuffer.byteLength === 0)
-        return [[],{},{},[],null,[],[],[],[]];
+        return [[],{},{},[],null,[],[],["\u00A0\u00A0\u00A0\u00A0-\u00A0\u00A0\u00A0\u00A0"],[]];
     const translation    = settings.translations[lang];
     const items_raw      = translation.items_raw;      // index -> item name
     const countries_raw  = translation.countries_raw;  // index -> country name
