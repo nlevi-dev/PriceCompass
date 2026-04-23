@@ -39,7 +39,6 @@ function App() {
         fetchData();
     }, [date]);
     
-    // TODO break language extract to a separate step so gzip doesn't need to fire again
     const [deserializedData, setDeserializedData] = useState([[],{},{},[],null,[],[],["\u00A0\u00A0\u00A0\u00A0-\u00A0\u00A0\u00A0\u00A0"],[]]);
     useEffect(() => {
         if (!binData.byteLength) return;
@@ -47,8 +46,10 @@ function App() {
             new URL('./workers/deserialize.worker.js', import.meta.url),
             { type: 'module' }
         );
+        const start = Date.now();
         worker.onmessage = ({ data }) => {
-            setDeserializedData(data);
+            const elapsed = Date.now() - start;
+            setTimeout(() => setDeserializedData(data), Math.max(0, 1000 - elapsed));
             worker.terminate();
         };
         worker.postMessage({ binData, language }, [binData]);

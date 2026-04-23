@@ -1,7 +1,6 @@
-import { bitsToBaseN, baseNtoBits, bitsToInt, intToBits, bitsToFloat, floatToBits, bitsToBitmask, bitmaskToBits, appendBits } from './utils';
+import { bitsToBaseN, baseNtoBits, bitsToInt, bitsToIntDV, intToBits, bitsToFloat, bitsToFloatDV, floatToBits, bitsToBitmask, bitmaskToBits, appendBits } from './utils';
 import { compressBigIntSync, decompressBigIntSync } from './compress';
 import settings from '../settings.json';
-import * as fflate from 'fflate';
 
 const S = settings.settings;
 
@@ -211,17 +210,14 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
         }
 
         const uncompressed = appendBits(bits);
+        const compressed = compressBigIntSync(uncompressed);
         const uncompressedLen = uncompressed.toString(2).length;
-        return bitsToBaseN(appendBits([[0,1],[uncompressed,uncompressedLen]]));
-        // const uncompressed = appendBits(bits);
-        // const compressed = compressBigIntSync(uncompressed);
-        // const uncompressedLen = uncompressed.toString(2).length;
-        // const compressedLen = compressed.toString(2).length;
-        // const diff = uncompressedLen - compressedLen;
-        // if (diff < 0)
-        //     return bitsToBaseN(appendBits([[0,1],[uncompressed,uncompressedLen]]));
-        // else
-        //     return bitsToBaseN(appendBits([[1,1],[compressed,compressedLen]]));
+        const compressedLen = compressed.toString(2).length;
+        const diff = uncompressedLen - compressedLen;
+        if (diff < 0)
+            return bitsToBaseN(appendBits([[0,1],[uncompressed,uncompressedLen]]));
+        else
+            return bitsToBaseN(appendBits([[1,1],[compressed,compressedLen]]));
     };
 
     return [
@@ -235,7 +231,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
     ];
 }
 
-export function deserializeBin(arrayBuffer, lang="EN") {
+export async function deserializeBin(arrayBuffer, lang="EN") {
     if (arrayBuffer.byteLength === 0)
         return [[],{},{},[],null,[],[],["\u00A0\u00A0\u00A0\u00A0-\u00A0\u00A0\u00A0\u00A0"],[]];
     const translation    = settings.translations[lang];
@@ -252,39 +248,36 @@ export function deserializeBin(arrayBuffer, lang="EN") {
     const categories     = translation.categories_order;
 
     const bytes = new Uint8Array(arrayBuffer);
-
-    let bits = 0n;
-    for (let i = bytes.length - 1; i >= 0; i--)
-        bits = (bits << 8n) | BigInt(bytes[i]);
+    const dv = new DataView(arrayBuffer);
 
     let pos = 0;
 
-    const countryCount = bitsToInt(bits, pos, BITS_COUNTRY_CNT);
+    const countryCount = bitsToIntDV(dv, pos, BITS_COUNTRY_CNT);
     pos += BITS_COUNTRY_CNT;
 
     const exchangeRaw = {};
     for (let i = 0; i < countryCount; i++) {
-        const countryIdx = bitsToInt(bits, pos, BITS_COUNTRY_LEN);
+        const countryIdx = bitsToIntDV(dv, pos, BITS_COUNTRY_LEN);
         pos += BITS_COUNTRY_LEN;
-        const rate = bitsToFloat(bits, pos, EXCHANGE_MANTISSA, EXCHANGE_EXPONENT);
+        const rate = bitsToFloatDV(dv, pos, EXCHANGE_MANTISSA, EXCHANGE_EXPONENT);
         pos += EXCHANGE_LEN;
         exchangeRaw[countryIdx] = rate;
     }
 
-    const combinationCount = bitsToInt(bits, pos, BITS_COUNTRY_ITEM_CNT);
+    const combinationCount = bitsToIntDV(dv, pos, BITS_COUNTRY_ITEM_CNT);
     pos += BITS_COUNTRY_ITEM_CNT;
 
     const rows = [];
     for (let i = 0; i < combinationCount; i++) {
-        const itemIdx    = bitsToInt(bits, pos, BITS_ITEM_LEN);    pos += BITS_ITEM_LEN;
-        const countryIdx = bitsToInt(bits, pos, BITS_COUNTRY_LEN); pos += BITS_COUNTRY_LEN;
+        const itemIdx    = bitsToIntDV(dv, pos, BITS_ITEM_LEN);    pos += BITS_ITEM_LEN;
+        const countryIdx = bitsToIntDV(dv, pos, BITS_COUNTRY_LEN); pos += BITS_COUNTRY_LEN;
 
         const variableCnt = BITS_PRICES_CNT_EXCEPTIONS[String(itemIdx)] ?? BITS_PRICES_CNT;
-        const priceCount  = bitsToInt(bits, pos, variableCnt);
+        const priceCount  = bitsToIntDV(dv, pos, variableCnt);
         pos += variableCnt;
 
         for (let j = 0; j < priceCount; j++) {
-            const price = bitsToFloat(bits, pos, PRICE_MANTISSA, PRICE_EXPONENT);
+            const price = bitsToFloatDV(dv, pos, PRICE_MANTISSA, PRICE_EXPONENT);
             pos += PRICE_LEN;
             rows.push({ itemIdx, countryIdx, price });
         }
@@ -293,8 +286,26 @@ export function deserializeBin(arrayBuffer, lang="EN") {
     const numBytesUsed = Math.ceil(pos / 8);
 
     const gzipBytes = bytes.slice(numBytesUsed);
-    const csvBytes  = fflate.gunzipSync(gzipBytes);
-    const csvText   = new TextDecoder().decode(csvBytes);
+
+    const ds = new DecompressionStream('gzip');
+    const writer = ds.writable.getWriter();
+    const reader = ds.readable.getReader();
+    writer.write(gzipBytes);
+    writer.close();
+
+    const chunks = [];
+    let totalLen = 0;
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        totalLen += value.length;
+    }
+
+    const csvBytes = new Uint8Array(totalLen);
+    let offset = 0;
+    for (const chunk of chunks) { csvBytes.set(chunk, offset); offset += chunk.length; }
+    const csvText = new TextDecoder().decode(csvBytes);
 
     const csvLines = csvText.split("\n");
     if (csvLines[csvLines.length - 1] === "") csvLines.pop();

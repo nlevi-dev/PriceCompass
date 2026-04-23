@@ -1,5 +1,5 @@
 import { deserializeBin } from '../utils/serialize';
 
-self.onmessage = ({ data: { binData, language } }) => {
-    self.postMessage(deserializeBin(binData, language));
+self.onmessage = async ({ data: { binData, language } }) => {
+    self.postMessage(await deserializeBin(binData, language));
 };

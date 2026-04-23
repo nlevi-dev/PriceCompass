@@ -42,6 +42,21 @@ export function bitsToInt(bits, from, len) {
     return Number(shifted & mask);
 }
 
+export function bitsToIntDV(dv, from, len) {
+    const byteOffset = from >> 3;
+    const bitOffset  = from & 7;
+    // read up to 4 bytes (32 bits) as a safe window
+    const bytesNeeded = Math.ceil((bitOffset + len) / 8);
+    let val = 0;
+    for (let i = 0; i < bytesNeeded; i++)
+        val |= dv.getUint8(byteOffset + i) << (i * 8);
+    return (val >>> bitOffset) & ((1 << len) - 1);
+}
+
+export function bitsToIntN(bits, from, len) {
+    return (bits >>> from) & ((1 << len) - 1);
+}
+
 export function intToBits(number) {
     return BigInt(number);
 }
@@ -79,6 +94,26 @@ export function bitsToFloat(bits, from, lenMantissa, lenExponent, round = []) {
     }
 
     return float;
+}
+
+export function bitsToFloatDV(dv, from, lenMantissa, lenExponent) {
+    const m_bits = bitsToIntDV(dv, from, lenMantissa);
+    const e_bits = bitsToIntDV(dv, from + lenMantissa, lenExponent);
+    const bias   = (1 << (lenExponent - 1)) - 1;
+    const max_e  = (1 << lenExponent) - 1;
+    if (e_bits === max_e && m_bits === 0) return null;
+    if (e_bits === 0) return m_bits * Math.pow(2, 1 - bias - lenMantissa);
+    return (1 + m_bits / Math.pow(2, lenMantissa)) * Math.pow(2, e_bits - bias);
+}
+
+export function bitsToFloatN(bits, from, lenMantissa, lenExponent) {
+    const m_bits = (bits >>> from) & ((1 << lenMantissa) - 1);
+    const e_bits = (bits >>> (from + lenMantissa)) & ((1 << lenExponent) - 1);
+    const bias = (1 << (lenExponent - 1)) - 1;
+    const max_e = (1 << lenExponent) - 1;
+    if (e_bits === max_e && m_bits === 0) return null;
+    if (e_bits === 0) return m_bits * Math.pow(2, 1 - bias - lenMantissa);
+    return (1 + m_bits / Math.pow(2, lenMantissa)) * Math.pow(2, e_bits - bias);
 }
 
 export function floatToBits(number, lenMantissa, lenExponent) {
