@@ -162,7 +162,7 @@ lookup_filters = {
     Item.APPLE: {
         Unit.NONE: Unit.KG,
         Category.NONE: Category.FRUITS_AND_VEGETABLES,
-        Lang.EN: ([["apple"]],["olive", "snack", "frozen", "freeze", "choco", "pickled"]),
+        Lang.EN: ([["apple"]],["olive", "snack", "frozen", "freeze", "choco", "pickled", "pineapple"]),
         Lang.HU: ([["alma"]],["gránát"]),
         Lang.DK: ([["æble"]],["granat", "must"]),
     },
@@ -239,7 +239,7 @@ lookup_filters = {
     Item.ONION: {
         Unit.NONE: Unit.KG,
         Category.NONE: Category.FRUITS_AND_VEGETABLES,
-        Lang.EN: ([["onion"]],["sweet", "snack", "pickled"]),
+        Lang.EN: ([["onion"]],["sweet", "snack", "pickled", "spring"]),
         Lang.HU: ([["vörös","hagyma"],["lila","hagyma"]],[]),
         Lang.DK: ([["løg"]],["hvid","purløg","ramsløg"]),
     },

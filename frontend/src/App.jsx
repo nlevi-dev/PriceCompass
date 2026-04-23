@@ -7,7 +7,7 @@ import PieChart, { generateColors } from './components/PieChart';
 import BarChart from './components/BarChart';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useQueryState } from './hooks/useQueryState';
-import { parseData, filterData, aggregateData, toCsv, toPieData, toItemData } from './utils/data';
+import { filterData, aggregateData, toCsv, toPieData, toItemData } from './utils/data';
 import { stateManage, deserializeBin } from './utils/serialize';
 import settings from './settings.json';
 
@@ -15,108 +15,107 @@ function App() {
     const [language, setLanguage] = useQueryState("lang", "EN", false);
     const [rawDate, setRawDate] = useQueryState("date", "latest", false);
     const [state, setState] = useQueryState("s", "", false);
+    const languages = Object.keys(settings.translations);
     const date = rawDate === "latest" ? settings.valid_date_ranges.at(-1).at(-1) : rawDate;
 
     const [binData, setBinData] = useState(new ArrayBuffer());
     useEffect(() => {
+        console.log("downloading");
         const fetchData = async () => {
             try {
                 const response = await fetch(`data/${date}.bin`);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch data: ${response.status}`);
+                    console.error("Error fetching data:", response.status);
+                    setBinData(new ArrayBuffer());
+                } else {
+                    const arrayBuffer = await response.arrayBuffer();
+                    setBinData(arrayBuffer);
+                    console.log("downloading done");
                 }
-                const arrayBuffer = await response.arrayBuffer();
-                setBinData(arrayBuffer);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setBinData(null);
+                setBinData(new ArrayBuffer());
             }
         };
         fetchData();
     }, [date]);
     
+    // TODO break language extract to a separate step so gzip doesn't need to fire again
+    const [deserializedData, setDeserializedData] = useState([[],{},{},[],null,[],[],[],[]]);
+    useEffect(() => {
+        console.log("deserializing");
+        const deserializeData = async () => {
+            setDeserializedData(deserializeBin(binData, language));
+            console.log("deserializing done");
+        }
+        deserializeData();
+    }, [binData, language]);
     const [
+        countries,
         exchange,
+        itemsPerCategory,
+        itemsAll,
         data,
-    ] = useMemo(() => {
-        if (binData.byteLength === 0)
-            return [null, null];
-        return deserializeBin(binData, language);
-    }, [binData.byteLength, language]);
+        countriesMap,
+        categoriesMap,
+        aggregateMap,
+        itemsMap,
+    ] = deserializedData;
 
-    console.log(exchange);
-    console.log(data);
+    const [
+        aggMethod,
+        collapsedCategories,
+        unLinkedItems,
+        selectedCountries,
+        itemCounts,
+        selectedItem,
+        serializeState,
+    ] = stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap);
 
-    // const [
-    //     languages,
-    //     date,
-    //     countries,
-    //     exchange,
-    //     itemsPerCategory,
-    //     itemsAll,
-    //     data,
-    //     countriesMap,
-    //     categoriesMap,
-    //     aggregateMap,
-    //     itemsMap,
-    // ] = useMemo(() => parseData(rawData, language), [language]);
+    const [ dataFiltered, exchangeFiltered ] = useMemo(() => filterData(data, exchange, selectedCountries), [language, selectedCountries]);
+    const dataAgg = useMemo(() => aggregateData(dataFiltered, aggregateMap?.findIndex(a => a === aggMethod)), [language, selectedCountries, aggMethod]);
 
-    // const [
-    //     aggMethod,
-    //     collapsedCategories,
-    //     unLinkedItems,
-    //     selectedCountries,
-    //     itemCounts,
-    //     selectedItem,
-    //     serializeState,
-    // ] = stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap);
+    const exportCSV = () => {
+        const csvString = toCsv(data);
+        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `${date}.csv`);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
 
-    // const [ dataFiltered, exchangeFiltered ] = useMemo(() => filterData(data, exchange, selectedCountries), [language, selectedCountries]);
-    // const dataAgg = useMemo(() => aggregateData(dataFiltered, aggregateMap.findIndex(a => a === aggMethod)), [language, selectedCountries, aggMethod]);
+    const handleReset = () => {
+        setState(serializeState(aggMethod, [], [], selectedCountries, {}, selectedItem));
+    };
 
-    // const exportCSV = () => {
-    //     const csvString = toCsv(data);
-    //     const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-    //     const url = URL.createObjectURL(blob);
-    //     const link = document.createElement("a");
-    //     link.setAttribute("href", url);
-    //     link.setAttribute("download", `${date}.csv`);
-    //     link.style.visibility = "hidden";
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     document.body.removeChild(link);
-    //     URL.revokeObjectURL(url);
-    // };
+    const formatCurrency = (currency) => {
+        return currency.toFixed(2);
+    }
 
-    // const handleReset = () => {
-    //     setState(serializeState(aggMethod, [], [], selectedCountries, {}, selectedItem));
-    // };
+    const [ pieSum, pieData, sumsPerCountry, maxPerCountry, pieCategoriesActive ] = toPieData(dataAgg, itemCounts, selectedCountries, categoriesMap);
 
-    // const formatCurrency = (currency) => {
-    //     return currency.toFixed(2);
-    // }
-
-    // const [ pieSum, pieData, sumsPerCountry, maxPerCountry, pieCategoriesActive ] = toPieData(dataAgg, itemCounts, selectedCountries, categoriesMap);
-
-    // const pieColors = useMemo(() => generateColors(categoriesMap.length), [categoriesMap.length]);
-    // const [pieHighlightedCategory, setPieHighlightedCategory] = useState(null);
+    const pieColors = useMemo(() => generateColors(categoriesMap?.length ?? 1), [categoriesMap?.length ?? 1]);
+    const [pieHighlightedCategory, setPieHighlightedCategory] = useState(null);
     
-    // const [ linksPerCountry, maxLinkCount ] = toItemData(dataAgg, itemCounts, selectedCountries, itemsMap, selectedItem);
+    const [ linksPerCountry, maxLinkCount ] = toItemData(dataAgg, itemCounts, selectedCountries, itemsMap, selectedItem);
 
-    // const setSelectedCountries = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, a, itemCounts, selectedItem));
-    // const setCollapsedCategories = (a) => setState(serializeState(aggMethod, a, unLinkedItems, selectedCountries, itemCounts, selectedItem));
-    // const setAggMethod = (a) => setState(serializeState(a, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedItem));
-    // const setUnLinkedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, a, selectedCountries, itemCounts, selectedItem));
-    // const setItemCounts = (a, countryChanged) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, a, selectedItem, countryChanged));
-    // const setSelectedItem = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, a));
+    const setSelectedCountries = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, a, itemCounts, selectedItem));
+    const setCollapsedCategories = (a) => setState(serializeState(aggMethod, a, unLinkedItems, selectedCountries, itemCounts, selectedItem));
+    const setAggMethod = (a) => setState(serializeState(a, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, selectedItem));
+    const setUnLinkedItems = (a) => setState(serializeState(aggMethod, collapsedCategories, a, selectedCountries, itemCounts, selectedItem));
+    const setItemCounts = (a, countryChanged) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, a, selectedItem, countryChanged));
+    const setSelectedItem = (a) => setState(serializeState(aggMethod, collapsedCategories, unLinkedItems, selectedCountries, itemCounts, a));
 
-    // if (selectedItem) {
-    //     document.body.style.overflow = "hidden";
-    // } else {
-    //     document.body.style.overflow = "unset";
-    // }
-
-    return (<div></div>);
+    if (selectedItem) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "unset";
+    }
 
     return (<React.Fragment>
         <div className="flex flex-col min-h-screen" style={{overflow:"hidden"}}>
@@ -163,8 +162,9 @@ function App() {
                     <div>
                         <select
                             value=""
-                            disabled={selectedCountries.length >= 3}
-                            style={selectedCountries.length >= 3?{opacity: 0.5, cursor: 'not-allowed'}:{}}
+                            disabled={selectedCountries.length >= 3 || data === null}
+                            style={data === null?{cursor:"wait"}:selectedCountries.length >= 3?{opacity:0.5,cursor:"not-allowed"}:{}}
+                            title={selectedCountries.length >= 3?"Can't add more than 3 countries!":""}
                             onChange={e => {
                                 const val = e.target.value;
                                 if (val) {
@@ -206,7 +206,7 @@ function App() {
             </section>
 
             {/* Aux Info Section */}
-            <section className="p-4">
+            {data !== null && (<section className="p-4">
                 <div className="max-w-7xl mx-auto w-full">
                     <p>Scraped at: {date}</p>
                     <br/>
@@ -223,11 +223,12 @@ function App() {
                         </tr>))}
                     </tbody></table>)}
                 </div>
-            </section>
+            </section>)}
 
             {/* Main Compare Section */}
-            {selectedCountries.length === 0 && (<h1 className="mt-20 flex-grow w-full text-center text-2xl font-semibold">Add a country to start browsing items!</h1>)}
-            {selectedCountries.length > 0 && (<section className="p-4 flex-grow">
+            {data === null && (<h1 className="mt-20 mb-20 flex-grow w-full text-center text-2xl font-semibold">Loading</h1>)}
+            {data !== null && selectedCountries.length === 0 && (<h1 className="mt-20 mb-20 flex-grow w-full text-center text-2xl font-semibold">Add a country to start browsing items!</h1>)}
+            {data !== null && selectedCountries.length > 0 && (<section className="p-4 flex-grow">
                 <div className="max-w-7xl mx-auto w-full">
                     <div className="overflow-auto max-h-[80vh] pb-4">
                         <table className="table_compare_1 min-w-full"><tbody>
@@ -304,8 +305,8 @@ function App() {
             </section>)}
 
             {/* Category Breakdown Section */}
-            {(selectedCountries.length > 0 && pieSum === 0) && (<h1 className="mt-20 w-full text-center text-2xl font-semibold mb-20">Add items to your selection!</h1>)}
-            {(selectedCountries.length > 0 && pieSum > 0) && (<section className="p-4">
+            {data !== null && (selectedCountries.length > 0 && pieSum === 0) && (<h1 className="mt-20 w-full text-center text-2xl font-semibold mb-20">Add items to your selection!</h1>)}
+            {data !== null && (selectedCountries.length > 0 && pieSum > 0) && (<section className="p-4">
                 <div className="max-w-7xl mx-auto w-full">
                     <div className="overflow-auto pb-4">
                         <table className="table_compare_1 min-w-full"><tbody>
@@ -380,7 +381,7 @@ function App() {
         </div>
 
         {/* Items Link Section */}
-        {(selectedItem) && (<div className="item_popup" onClick={() => setSelectedItem(null)}><div onClick={(event) => event.stopPropagation()}>
+        {data !== null && (selectedItem) && (<div className="item_popup" onClick={() => setSelectedItem(null)}><div onClick={(event) => event.stopPropagation()}>
             <div className="max-w-7xl mx-auto w-full h-full flex flex-col">
                 <div className="flex-none flex flex-row justify-end"><CloseButton size={35} style={{"marginBottom":"0.5em"}} onClick={() => setSelectedItem(null)} /></div>
                 <div className="grow overflow-auto min-h-0">

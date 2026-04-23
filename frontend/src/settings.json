@@ -145,6 +145,10 @@
         7,
         7
     ],
+    "currency_map": {
+        "0": "HUF",
+        "1": "DKK"
+    },
     "valid_date_ranges": [
         [
             "2026-04-11",

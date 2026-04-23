@@ -1,84 +1,6 @@
-// {
-//     "date": "2026-03-24",
-//     "translations": {
-//         "EN": {
-//             "data": [
-//                 {
-//                     "category": "Meat and Fish",
-//                     "countries": {
-//                         "Hungary": [
-//                             {
-//                                 "name": "Pork Mince",
-//                                 "unit": "kg",
-//                                 "items": [
-//                                     {
-//                                         "price": 1,
-//                                         "vendor": "auchan.hu",
-//                                         "link": "[LINK]",
-//                                         "name": "daralt hus",
-//                                     }
-//                                 ]
-//                             }
-//                         ]
-//                     },
-//                 }
-//             ],
-//             "countries": ["Hungary"],
-//             "countries_raw": [],
-//             "categories_raw": [],
-//             "aggregate_raw": [],
-//             "items_raw": [],
-//             "exchange": {"Hungary":{"currency":"HUF","value":1}},
-//         }
-//     }
-// }
-
-export function parseData(jsonData, lang = 'EN') {
-    const date = jsonData.date;
-    const tmp = jsonData.translations[lang];
-    const data = tmp.data;
-    const countries = tmp.countries;
-    const exchange = tmp.exchange;
-    const itemsPerCategory = {};
-    const itemsAll = [];
-    const countriesMap = tmp.countries_raw;
-    const categoriesMap = tmp.categories_raw;
-    const aggregateMap = tmp.aggregate_raw;
-    const itemsMap = tmp.items_raw;
-
-    data.forEach(categoryObj => {
-        const categoryName = categoryObj.category;
-        if (!itemsPerCategory[categoryName]) {
-            itemsPerCategory[categoryName] = [];
-        }
-        Object.values(categoryObj.countries).forEach(productsInCountry => {
-            productsInCountry.forEach(product => {
-                if (!itemsPerCategory[categoryName].map(p => p.name).includes(product.name)) {
-                    itemsPerCategory[categoryName].push(product);
-                }
-                if (!itemsAll.map(p => p.name).includes(product.name)) {
-                    itemsAll.push(product);
-                }
-            });
-        });
-    });
-
-    return [
-        Object.keys(jsonData.translations),
-        date,
-        countries,
-        exchange,
-        itemsPerCategory,
-        itemsAll,
-        data,
-        countriesMap,
-        categoriesMap,
-        aggregateMap,
-        itemsMap,
-    ];
-}
-
 export function filterData(data, exchange, countries) {
+    if (data === null)
+        return [null,null];
     const dataFiltered = data.map(categoryObj => {
         const filteredCountries = {};
         Object.keys(categoryObj.countries).forEach(countryName => {
@@ -108,9 +30,10 @@ export function filterData(data, exchange, countries) {
 }
 
 export function aggregateData(data, method = 0) {
-    if (data.length == 0) {
+    if (data === null)
+        return null;
+    if (data.length === 0)
         return data;
-    }
     return data.map(categoryObj => {
         const updatedCountries = {};
         for (const [country, products] of Object.entries(categoryObj.countries)) {
@@ -177,6 +100,8 @@ export function toCsv(data) {
 }
 
 export function toPieData(data, itemCounts, countriesMap, categoriesMap) {
+    if (data === null)
+        return [null,null,null,null,null];
     const piesPerCountry = countriesMap.reduce((acc, country) => {acc[country] = categoriesMap.map((category, idx) => {return {"name": category, "idx": idx, "sum": 0};}); return acc;}, {});
     const pieCategoriesActive = categoriesMap.map((category, idx) => {return {"name": category, "idx": idx, "sum": 0};});
     let allSum = 0;
@@ -200,6 +125,8 @@ export function toPieData(data, itemCounts, countriesMap, categoriesMap) {
 }
 
 export function toItemData(data, itemCounts, countriesMap, itemsMap, selectedItem) {
+    if (data === null)
+        return [null,null];
     const linksPerCountry = countriesMap.reduce((acc, country) => {acc[country] = {}; return acc;}, {});
     let maxLinkCount = 0;
 

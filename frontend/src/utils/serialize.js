@@ -18,7 +18,7 @@ const PRICE_EXPONENT             = S.PRICE_EXPONENT;
 // used for url encoding
 const BITS_AGG_LEN      = S.BITS_AGG_LEN;
 const BITS_CATEGORY_LEN = S.BITS_CATEGORY_LEN;
-//BITS_ITEMS_LEN
+//BITS_ITEM_LEN
 const BITS_COUNTRY_CNT  = S.BITS_COUNTRY_CNT;
 //BITS_COUNTRY_LEN
 const BITS_COUNT_LEN    = S.BITS_COUNT_LEN;
@@ -52,6 +52,8 @@ function customFixedToInt(num) {
 }
 
 export function stateManage(state, countriesMap, categoriesMap, aggregateMap, itemsMap) {
+    if (countriesMap === null)
+        return ["",[],[],[],{},null,null];
     let aggMethod;
     let collapsedCategories;
     let unLinkedItems;
@@ -88,7 +90,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
                 collapsedCategories.push(categoriesMap[i]);
         idx += len;
 
-        len = BITS_ITEMS_LEN;
+        len = BITS_ITEM_LEN;
         const itemCount = bitsToInt(bits, idx, len);
         idx += len;
 
@@ -127,7 +129,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
             }
         }
 
-        len = BITS_ITEMS_LEN;
+        len = BITS_ITEM_LEN;
         selectedItem = itemsMap[bitsToInt(bits, idx, len)];
         idx += len;
 
@@ -168,7 +170,7 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
         bits.push([bitmaskToBits(collapsedCategoriesBitmask), categoriesMap.length]);
 
         const itemCount = itemsMap.length;
-        bits.push([intToBits(itemCount), BITS_ITEMS_LEN]);
+        bits.push([intToBits(itemCount), BITS_ITEM_LEN]);
 
         const unLinkedItemsBitmask = itemsMap.map(c => unLinkedItems.includes(c));
         bits.push([bitmaskToBits(unLinkedItemsBitmask), itemsMap.length]);
@@ -201,10 +203,10 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
 
         if (selectedItem) {
             const itemIdx = itemsMap.findIndex(c => c === selectedItem);
-            bits.push([intToBits(itemIdx), BITS_ITEMS_LEN]);
+            bits.push([intToBits(itemIdx), BITS_ITEM_LEN]);
             bits.push([intToBits(1), 1]);
         } else {
-            bits.push([intToBits(0), BITS_ITEMS_LEN]);
+            bits.push([intToBits(0), BITS_ITEM_LEN]);
             bits.push([intToBits(0), 1]);
         }
         
@@ -231,13 +233,20 @@ export function stateManage(state, countriesMap, categoriesMap, aggregateMap, it
 }
 
 export function deserializeBin(arrayBuffer, lang="EN") {
+    if (arrayBuffer.byteLength === 0)
+        return [[],{},{},[],null,[],[],[],[]];
     const translation    = settings.translations[lang];
     const items_raw      = translation.items_raw;      // index -> item name
     const countries_raw  = translation.countries_raw;  // index -> country name
     const categories_raw = translation.categories_raw; // index -> category name
     const units_raw      = translation.units_raw;      // index -> unit name
+    const aggregate_raw  = translation.aggregate_raw;  // index -> aggregation mode name
     const category_map   = settings.category_map;      // item index -> category index
     const unit_map       = settings.unit_map;          // item index -> unit index
+    const currency_map   = settings.currency_map;      // country index -> currency string
+    const items          = translation.items_order;
+    const countries      = translation.countries_order;
+    const categories     = translation.categories_order;
 
     const bytes = new Uint8Array(arrayBuffer);
 
@@ -250,13 +259,13 @@ export function deserializeBin(arrayBuffer, lang="EN") {
     const countryCount = bitsToInt(bits, pos, BITS_COUNTRY_CNT);
     pos += BITS_COUNTRY_CNT;
 
-    const exchange = {};
+    const exchangeRaw = {};
     for (let i = 0; i < countryCount; i++) {
         const countryIdx = bitsToInt(bits, pos, BITS_COUNTRY_LEN);
         pos += BITS_COUNTRY_LEN;
         const rate = bitsToFloat(bits, pos, EXCHANGE_MANTISSA, EXCHANGE_EXPONENT);
         pos += EXCHANGE_LEN;
-        exchange[countries_raw[countryIdx]] = rate;
+        exchangeRaw[countryIdx] = rate;
     }
 
     const combinationCount = bitsToInt(bits, pos, BITS_COUNTRY_ITEM_CNT);
@@ -287,7 +296,7 @@ export function deserializeBin(arrayBuffer, lang="EN") {
     const csvLines = csvText.split("\n");
     if (csvLines[csvLines.length - 1] === "") csvLines.pop();
 
-    const data = {};
+    const dataRaw = {};
     for (let i = 0; i < rows.length; i++) {
         const { itemIdx, countryIdx, price } = rows[i];
         const parts = csvLines[i].split(",");
@@ -299,15 +308,93 @@ export function deserializeBin(arrayBuffer, lang="EN") {
         const categoryName = categories_raw[category_map[itemIdx]];
         const unitName     = units_raw[unit_map[itemIdx]];
 
-        if (!data[categoryName])
-            data[categoryName] = {};
-        if (!data[categoryName][countryName])
-            data[categoryName][countryName] = {};
-        if (!data[categoryName][countryName][itemName])
-            data[categoryName][countryName][itemName] = { unit: unitName, items: [] };
+        if (!dataRaw[categoryName])
+            dataRaw[categoryName] = {};
+        if (!dataRaw[categoryName][countryName])
+            dataRaw[categoryName][countryName] = {};
+        if (!dataRaw[categoryName][countryName][itemName])
+            dataRaw[categoryName][countryName][itemName] = { unit: unitName, items: [] };
 
-        data[categoryName][countryName][itemName].items.push({ price, vendor, link, name: original_name });
+        dataRaw[categoryName][countryName][itemName].items.push({ price, vendor, link, name: original_name });
     }
 
-    return [ exchange, data ];
+    const itemsPerCategory = {};
+    const itemsAll = [];
+    const data = categories.filter(category => dataRaw[category]).map(categoryName => {
+        if (!itemsPerCategory[categoryName]) {
+            itemsPerCategory[categoryName] = [];
+        }
+        const countriesObj = dataRaw[categoryName];
+        const updatedCountries = {};
+        Object.entries(countriesObj).forEach(([country, products]) => {
+            updatedCountries[country] = Object.entries(products).map(([name, product]) => {
+                return { name, ...product };
+            }).sort((a, b) => {
+                const indexA = items.indexOf(a.name);
+                const indexB = items.indexOf(b.name);
+                return indexA - indexB;
+            });
+            updatedCountries[country].forEach(product => {
+                if (!itemsPerCategory[categoryName].map(p => p.name).includes(product.name)) {
+                    itemsPerCategory[categoryName].push(product);
+                }
+                if (!itemsAll.map(p => p.name).includes(product.name)) {
+                    itemsAll.push(product);
+                }
+            });
+        });
+        return { category: categoryName, countries: updatedCountries };
+    });
+
+    const exchange = {};
+    Object.entries(exchangeRaw).forEach(([countryIdx, rate]) => {
+        exchange[countries_raw[countryIdx]] = { currency: currency_map[countryIdx], value: 1.0/rate };
+    });
+
+    return [
+        countries,
+        exchange,
+        itemsPerCategory,
+        itemsAll,
+        data,
+        countries_raw,
+        categories_raw,
+        aggregate_raw,
+        items_raw,
+    ];
 }
+
+// {
+//     "date": "2026-03-24",
+//     "translations": {
+//         "EN": {
+//             "data": [
+//                 {
+//                     "category": "Meat and Fish",
+//                     "countries": {
+//                         "Hungary": [
+//                             {
+//                                 "name": "Pork Mince",
+//                                 "unit": "kg",
+//                                 "items": [
+//                                     {
+//                                         "price": 1,
+//                                         "vendor": "auchan.hu",
+//                                         "link": "[LINK]",
+//                                         "name": "daralt hus",
+//                                     }
+//                                 ]
+//                             }
+//                         ]
+//                     },
+//                 }
+//             ],
+//             "countries": ["Hungary"],
+//             "countries_raw": [],
+//             "categories_raw": [],
+//             "aggregate_raw": [],
+//             "items_raw": [],
+//             "exchange": {"Hungary":{"currency":"HUF","value":1}},
+//         }
+//     }
+// }

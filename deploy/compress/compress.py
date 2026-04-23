@@ -120,6 +120,7 @@ def generate_settings(valid_date_ranges=[], lanuages=[Lang.EN]):
     #     "settings": {},
     #     "category_map": {},
     #     "unit_map": {},
+    #     "currency_map": {},
     #     "valid_date_ranges": [],
     #     "translations": {
     #         "EN": {
@@ -154,6 +155,7 @@ def generate_settings(valid_date_ranges=[], lanuages=[Lang.EN]):
     items = list(Item)
     data["category_map"] = [lookup_filters[item][Category.NONE].value-2 for item in items]
     data["unit_map"] = [lookup_filters[item][Unit.NONE].value-2 for item in items]
+    data["currency_map"] = {(country.value-2):lookup_currency[country].name for country in lookup_currency}
     data["valid_date_ranges"] = valid_date_ranges
     translations = {}
     for lang in lanuages:
