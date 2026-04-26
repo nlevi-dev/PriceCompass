@@ -1,0 +1,4 @@
+[submodule "deploy/index"]
+	path = deploy/index
+	url = https://github.com/nlevi-dev/PriceCompass
+	branch = index
