@@ -1,0 +1,264 @@
+# Third-Party Notices
+
+## Scraper
+
+| Name | Version | License |
+| :--- | :------ | :------ |
+| [Pygments](/legal/licenses/scraper-Pygments-2.20.0-LICENSE.txt) | 2.20.0 | BSD-2-Clause |
+| [beautifulsoup4](/legal/licenses/scraper-beautifulsoup4-4.14.3-LICENSE.txt) | 4.14.3 | MIT License |
+| [certifi](/legal/licenses/scraper-certifi-2026.2.25-LICENSE.txt) | 2026.2.25 | Mozilla Public License 2.0 (MPL 2.0) |
+| [charset-normalizer](/legal/licenses/scraper-charset-normalizer-3.4.7-LICENSE.txt) | 3.4.7 | MIT |
+| [exceptiongroup](/legal/licenses/scraper-exceptiongroup-1.3.1-LICENSE.txt) | 1.3.1 | MIT License |
+| [greenlet](/legal/licenses/scraper-greenlet-3.2.5-LICENSE.txt) | 3.2.5 | MIT AND Python-2.0 |
+| [idna](/legal/licenses/scraper-idna-3.11-LICENSE.txt) | 3.11 | BSD-3-Clause |
+| [iniconfig](/legal/licenses/scraper-iniconfig-2.1.0-LICENSE.txt) | 2.1.0 | MIT |
+| [lxml](/legal/licenses/scraper-lxml-6.0.2-LICENSE.txt) | 6.0.2 | BSD-3-Clause |
+| [numpy](/legal/licenses/scraper-numpy-2.0.2-LICENSE.txt) | 2.0.2 | BSD License |
+| [opencv-python](/legal/licenses/scraper-opencv-python-4.13.0.92-LICENSE.txt) | 4.13.0.92 | Apache Software License |
+| [packaging](/legal/licenses/scraper-packaging-26.0-LICENSE.txt) | 26.0 | Apache-2.0 OR BSD-2-Clause |
+| [pandas](/legal/licenses/scraper-pandas-2.3.3-LICENSE.txt) | 2.3.3 | BSD License |
+| [pillow](/legal/licenses/scraper-pillow-11.3.0-LICENSE.txt) | 11.3.0 | MIT-CMU |
+| [playwright](/legal/licenses/scraper-playwright-1.58.0-LICENSE.txt) | 1.58.0 | Apache-2.0 |
+| [playwright-stealth](/legal/licenses/scraper-playwright-stealth-2.0.3-LICENSE.txt) | 2.0.3 | MIT |
+| [pluggy](/legal/licenses/scraper-pluggy-1.6.0-LICENSE.txt) | 1.6.0 | MIT License |
+| [pyee](/legal/licenses/scraper-pyee-13.0.1-LICENSE.txt) | 13.0.1 | MIT License |
+| [pytesseract](/legal/licenses/scraper-pytesseract-0.3.13-LICENSE.txt) | 0.3.13 | Apache Software License |
+| [pytest](/legal/licenses/scraper-pytest-8.4.2-LICENSE.txt) | 8.4.2 | MIT License |
+| [python-dateutil](/legal/licenses/scraper-python-dateutil-2.9.0.post0-LICENSE.txt) | 2.9.0.post0 | Apache Software License; BSD License |
+| [pytz](/legal/licenses/scraper-pytz-2026.1.post1-LICENSE.txt) | 2026.1.post1 | MIT License |
+| [requests](/legal/licenses/scraper-requests-2.32.5-LICENSE.txt) | 2.32.5 | Apache Software License |
+| [six](/legal/licenses/scraper-six-1.17.0-LICENSE.txt) | 1.17.0 | MIT License |
+| [soupsieve](/legal/licenses/scraper-soupsieve-2.8.3-LICENSE.txt) | 2.8.3 | MIT |
+| [tqdm](/legal/licenses/scraper-tqdm-4.67.3-LICENSE.txt) | 4.67.3 | MPL-2.0 AND MIT |
+| [typing_extensions](/legal/licenses/scraper-typing_extensions-4.15.0-LICENSE.txt) | 4.15.0 | PSF-2.0 |
+| [tzdata](/legal/licenses/scraper-tzdata-2026.1-LICENSE.txt) | 2026.1 | Apache-2.0 |
+| [urllib3](/legal/licenses/scraper-urllib3-2.6.3-LICENSE.txt) | 2.6.3 | MIT |
+
+## Frontend
+
+| Name | Version | License |
+| :--- | :------ | :------ |
+| [@alloc/quick-lru](/legal/licenses/frontend-alloc-quick-lru-5.2.0-LICENSE.txt) | 5.2.0 | MIT |
+| [@babel/code-frame](/legal/licenses/frontend-babel-code-frame-7.29.0-LICENSE.txt) | 7.29.0 | MIT |
+| [@babel/compat-data](/legal/licenses/frontend-babel-compat-data-7.29.0-LICENSE.txt) | 7.29.0 | MIT |
+| [@babel/core](/legal/licenses/frontend-babel-core-7.29.0-LICENSE.txt) | 7.29.0 | MIT |
+| [@babel/generator](/legal/licenses/frontend-babel-generator-7.29.1-LICENSE.txt) | 7.29.1 | MIT |
+| [@babel/helper-compilation-targets](/legal/licenses/frontend-babel-helper-compilation-targets-7.28.6-LICENSE.txt) | 7.28.6 | MIT |
+| [@babel/helper-globals](/legal/licenses/frontend-babel-helper-globals-7.28.0-LICENSE.txt) | 7.28.0 | MIT |
+| [@babel/helper-module-imports](/legal/licenses/frontend-babel-helper-module-imports-7.28.6-LICENSE.txt) | 7.28.6 | MIT |
+| [@babel/helper-module-transforms](/legal/licenses/frontend-babel-helper-module-transforms-7.28.6-LICENSE.txt) | 7.28.6 | MIT |
+| [@babel/helper-string-parser](/legal/licenses/frontend-babel-helper-string-parser-7.27.1-LICENSE.txt) | 7.27.1 | MIT |
+| [@babel/helper-validator-identifier](/legal/licenses/frontend-babel-helper-validator-identifier-7.28.5-LICENSE.txt) | 7.28.5 | MIT |
+| [@babel/helper-validator-option](/legal/licenses/frontend-babel-helper-validator-option-7.27.1-LICENSE.txt) | 7.27.1 | MIT |
+| [@babel/helpers](/legal/licenses/frontend-babel-helpers-7.29.2-LICENSE.txt) | 7.29.2 | MIT |
+| [@babel/parser](/legal/licenses/frontend-babel-parser-7.29.2-LICENSE.txt) | 7.29.2 | MIT |
+| [@babel/template](/legal/licenses/frontend-babel-template-7.28.6-LICENSE.txt) | 7.28.6 | MIT |
+| [@babel/traverse](/legal/licenses/frontend-babel-traverse-7.29.0-LICENSE.txt) | 7.29.0 | MIT |
+| [@babel/types](/legal/licenses/frontend-babel-types-7.29.0-LICENSE.txt) | 7.29.0 | MIT |
+| [@emnapi/core](/legal/licenses/frontend-emnapi-core-1.9.2-LICENSE.txt) | 1.9.2 | MIT |
+| [@emnapi/runtime](/legal/licenses/frontend-emnapi-runtime-1.9.2-LICENSE.txt) | 1.9.2 | MIT |
+| [@emnapi/wasi-threads](/legal/licenses/frontend-emnapi-wasi-threads-1.2.1-LICENSE.txt) | 1.2.1 | MIT |
+| [@eslint-community/eslint-utils](/legal/licenses/frontend-eslint-community-eslint-utils-4.9.1-LICENSE.txt) | 4.9.1 | MIT |
+| [@eslint-community/regexpp](/legal/licenses/frontend-eslint-community-regexpp-4.12.2-LICENSE.txt) | 4.12.2 | MIT |
+| [@eslint/config-array](/legal/licenses/frontend-eslint-config-array-0.21.2-LICENSE.txt) | 0.21.2 | Apache-2.0 |
+| [@eslint/config-helpers](/legal/licenses/frontend-eslint-config-helpers-0.4.2-LICENSE.txt) | 0.4.2 | Apache-2.0 |
+| [@eslint/core](/legal/licenses/frontend-eslint-core-0.17.0-LICENSE.txt) | 0.17.0 | Apache-2.0 |
+| [@eslint/eslintrc](/legal/licenses/frontend-eslint-eslintrc-3.3.5-LICENSE.txt) | 3.3.5 | MIT |
+| [@eslint/js](/legal/licenses/frontend-eslint-js-9.39.4-LICENSE.txt) | 9.39.4 | MIT |
+| [@eslint/object-schema](/legal/licenses/frontend-eslint-object-schema-2.1.7-LICENSE.txt) | 2.1.7 | Apache-2.0 |
+| [@eslint/plugin-kit](/legal/licenses/frontend-eslint-plugin-kit-0.4.1-LICENSE.txt) | 0.4.1 | Apache-2.0 |
+| [@humanfs/core](/legal/licenses/frontend-humanfs-core-0.19.1-LICENSE.txt) | 0.19.1 | Apache-2.0 |
+| [@humanfs/node](/legal/licenses/frontend-humanfs-node-0.16.7-LICENSE.txt) | 0.16.7 | Apache-2.0 |
+| [@humanwhocodes/module-importer](/legal/licenses/frontend-humanwhocodes-module-importer-1.0.1-LICENSE.txt) | 1.0.1 | Apache-2.0 |
+| [@humanwhocodes/retry](/legal/licenses/frontend-humanwhocodes-retry-0.4.3-LICENSE.txt) | 0.4.3 | Apache-2.0 |
+| [@jridgewell/gen-mapping](/legal/licenses/frontend-jridgewell-gen-mapping-0.3.13-LICENSE.txt) | 0.3.13 | MIT |
+| [@jridgewell/remapping](/legal/licenses/frontend-jridgewell-remapping-2.3.5-LICENSE.txt) | 2.3.5 | MIT |
+| [@jridgewell/resolve-uri](/legal/licenses/frontend-jridgewell-resolve-uri-3.1.2-LICENSE.txt) | 3.1.2 | MIT |
+| [@jridgewell/sourcemap-codec](/legal/licenses/frontend-jridgewell-sourcemap-codec-1.5.5-LICENSE.txt) | 1.5.5 | MIT |
+| [@jridgewell/trace-mapping](/legal/licenses/frontend-jridgewell-trace-mapping-0.3.31-LICENSE.txt) | 0.3.31 | MIT |
+| @napi-rs/wasm-runtime | 1.1.4 | MIT |
+| [@oxc-project/types](/legal/licenses/frontend-oxc-project-types-0.124.0-LICENSE.txt) | 0.124.0 | MIT |
+| [@reduxjs/toolkit](/legal/licenses/frontend-reduxjs-toolkit-2.11.2-LICENSE.txt) | 2.11.2 | MIT |
+| [@rolldown/binding-linux-x64-gnu](/legal/licenses/frontend-rolldown-binding-linux-x64-gnu-1.0.0-rc.15-LICENSE.txt) | 1.0.0-rc.15 | MIT |
+| [@rolldown/pluginutils](/legal/licenses/frontend-rolldown-pluginutils-1.0.0-rc.15-LICENSE.txt) | 1.0.0-rc.15 | MIT |
+| [@rolldown/pluginutils](/legal/licenses/frontend-rolldown-pluginutils-1.0.0-rc.7-LICENSE.txt) | 1.0.0-rc.7 | MIT |
+| [@rollup/rollup-linux-x64-gnu](/legal/licenses/frontend-rollup-rollup-linux-x64-gnu-4.60.0-LICENSE.txt) | 4.60.0 | MIT |
+| [@standard-schema/spec](/legal/licenses/frontend-standard-schema-spec-1.1.0-LICENSE.txt) | 1.1.0 | MIT |
+| [@standard-schema/utils](/legal/licenses/frontend-standard-schema-utils-0.3.0-LICENSE.txt) | 0.3.0 | MIT |
+| [@tailwindcss/forms](/legal/licenses/frontend-tailwindcss-forms-0.5.11-LICENSE.txt) | 0.5.11 | MIT |
+| [@tailwindcss/node](/legal/licenses/frontend-tailwindcss-node-4.2.2-LICENSE.txt) | 4.2.2 | MIT |
+| [@tailwindcss/oxide-linux-x64-gnu](/legal/licenses/frontend-tailwindcss-oxide-linux-x64-gnu-4.2.2-LICENSE.txt) | 4.2.2 | MIT |
+| [@tailwindcss/oxide](/legal/licenses/frontend-tailwindcss-oxide-4.2.2-LICENSE.txt) | 4.2.2 | MIT |
+| [@tailwindcss/postcss](/legal/licenses/frontend-tailwindcss-postcss-4.2.2-LICENSE.txt) | 4.2.2 | MIT |
+| [@tybys/wasm-util](/legal/licenses/frontend-tybys-wasm-util-0.10.1-LICENSE.txt) | 0.10.1 | MIT |
+| [@types/d3-array](/legal/licenses/frontend-types-d3-array-3.2.2-LICENSE.txt) | 3.2.2 | MIT |
+| [@types/d3-color](/legal/licenses/frontend-types-d3-color-3.1.3-LICENSE.txt) | 3.1.3 | MIT |
+| [@types/d3-ease](/legal/licenses/frontend-types-d3-ease-3.0.2-LICENSE.txt) | 3.0.2 | MIT |
+| [@types/d3-interpolate](/legal/licenses/frontend-types-d3-interpolate-3.0.4-LICENSE.txt) | 3.0.4 | MIT |
+| [@types/d3-path](/legal/licenses/frontend-types-d3-path-3.1.1-LICENSE.txt) | 3.1.1 | MIT |
+| [@types/d3-scale](/legal/licenses/frontend-types-d3-scale-4.0.9-LICENSE.txt) | 4.0.9 | MIT |
+| [@types/d3-shape](/legal/licenses/frontend-types-d3-shape-3.1.8-LICENSE.txt) | 3.1.8 | MIT |
+| [@types/d3-time](/legal/licenses/frontend-types-d3-time-3.0.4-LICENSE.txt) | 3.0.4 | MIT |
+| [@types/d3-timer](/legal/licenses/frontend-types-d3-timer-3.0.2-LICENSE.txt) | 3.0.2 | MIT |
+| [@types/estree](/legal/licenses/frontend-types-estree-1.0.8-LICENSE.txt) | 1.0.8 | MIT |
+| [@types/json-schema](/legal/licenses/frontend-types-json-schema-7.0.15-LICENSE.txt) | 7.0.15 | MIT |
+| [@types/react-dom](/legal/licenses/frontend-types-react-dom-19.2.3-LICENSE.txt) | 19.2.3 | MIT |
+| [@types/react](/legal/licenses/frontend-types-react-19.2.14-LICENSE.txt) | 19.2.14 | MIT |
+| [@types/use-sync-external-store](/legal/licenses/frontend-types-use-sync-external-store-0.0.6-LICENSE.txt) | 0.0.6 | MIT |
+| [@vitejs/plugin-react](/legal/licenses/frontend-vitejs-plugin-react-6.0.1-LICENSE.txt) | 6.0.1 | MIT |
+| [acorn-jsx](/legal/licenses/frontend-acorn-jsx-5.3.2-LICENSE.txt) | 5.3.2 | MIT |
+| [acorn](/legal/licenses/frontend-acorn-8.16.0-LICENSE.txt) | 8.16.0 | MIT |
+| [ajv](/legal/licenses/frontend-ajv-6.14.0-LICENSE.txt) | 6.14.0 | MIT |
+| [ansi-styles](/legal/licenses/frontend-ansi-styles-4.3.0-LICENSE.txt) | 4.3.0 | MIT |
+| [argparse](/legal/licenses/frontend-argparse-2.0.1-LICENSE.txt) | 2.0.1 | Python-2.0 |
+| [autoprefixer](/legal/licenses/frontend-autoprefixer-10.4.27-LICENSE.txt) | 10.4.27 | MIT |
+| [balanced-match](/legal/licenses/frontend-balanced-match-1.0.2-LICENSE.txt) | 1.0.2 | MIT |
+| [baseline-browser-mapping](/legal/licenses/frontend-baseline-browser-mapping-2.10.10-LICENSE.txt) | 2.10.10 | Apache-2.0 |
+| [brace-expansion](/legal/licenses/frontend-brace-expansion-1.1.13-LICENSE.txt) | 1.1.13 | MIT |
+| [braces](/legal/licenses/frontend-braces-3.0.3-LICENSE.txt) | 3.0.3 | MIT |
+| [browserslist](/legal/licenses/frontend-browserslist-4.28.1-LICENSE.txt) | 4.28.1 | MIT |
+| [callsites](/legal/licenses/frontend-callsites-3.1.0-LICENSE.txt) | 3.1.0 | MIT |
+| [caniuse-lite](/legal/licenses/frontend-caniuse-lite-1.0.30001781-LICENSE.txt) | 1.0.30001781 | CC-BY-4.0 |
+| [chalk](/legal/licenses/frontend-chalk-4.1.2-LICENSE.txt) | 4.1.2 | MIT |
+| [clsx](/legal/licenses/frontend-clsx-2.1.1-LICENSE.txt) | 2.1.1 | MIT |
+| [color-convert](/legal/licenses/frontend-color-convert-2.0.1-LICENSE.txt) | 2.0.1 | MIT |
+| [color-name](/legal/licenses/frontend-color-name-1.1.4-LICENSE.txt) | 1.1.4 | MIT |
+| [concat-map](/legal/licenses/frontend-concat-map-0.0.1-LICENSE.txt) | 0.0.1 | MIT |
+| [convert-source-map](/legal/licenses/frontend-convert-source-map-2.0.0-LICENSE.txt) | 2.0.0 | MIT |
+| [cross-spawn](/legal/licenses/frontend-cross-spawn-7.0.6-LICENSE.txt) | 7.0.6 | MIT |
+| [csstype](/legal/licenses/frontend-csstype-3.2.3-LICENSE.txt) | 3.2.3 | MIT |
+| [d3-array](/legal/licenses/frontend-d3-array-3.2.4-LICENSE.txt) | 3.2.4 | ISC |
+| [d3-color](/legal/licenses/frontend-d3-color-3.1.0-LICENSE.txt) | 3.1.0 | ISC |
+| [d3-ease](/legal/licenses/frontend-d3-ease-3.0.1-LICENSE.txt) | 3.0.1 | BSD-3-Clause |
+| [d3-format](/legal/licenses/frontend-d3-format-3.1.2-LICENSE.txt) | 3.1.2 | ISC |
+| [d3-interpolate](/legal/licenses/frontend-d3-interpolate-3.0.1-LICENSE.txt) | 3.0.1 | ISC |
+| [d3-path](/legal/licenses/frontend-d3-path-3.1.0-LICENSE.txt) | 3.1.0 | ISC |
+| [d3-scale](/legal/licenses/frontend-d3-scale-4.0.2-LICENSE.txt) | 4.0.2 | ISC |
+| [d3-shape](/legal/licenses/frontend-d3-shape-3.2.0-LICENSE.txt) | 3.2.0 | ISC |
+| [d3-time-format](/legal/licenses/frontend-d3-time-format-4.1.0-LICENSE.txt) | 4.1.0 | ISC |
+| [d3-time](/legal/licenses/frontend-d3-time-3.1.0-LICENSE.txt) | 3.1.0 | ISC |
+| [d3-timer](/legal/licenses/frontend-d3-timer-3.0.1-LICENSE.txt) | 3.0.1 | ISC |
+| [debug](/legal/licenses/frontend-debug-4.4.3-LICENSE.txt) | 4.4.3 | MIT |
+| [decimal.js-light](/legal/licenses/frontend-decimal.js-light-2.5.1-LICENSE.txt) | 2.5.1 | MIT |
+| [deep-is](/legal/licenses/frontend-deep-is-0.1.4-LICENSE.txt) | 0.1.4 | MIT |
+| [detect-libc](/legal/licenses/frontend-detect-libc-2.1.2-LICENSE.txt) | 2.1.2 | Apache-2.0 |
+| [electron-to-chromium](/legal/licenses/frontend-electron-to-chromium-1.5.322-LICENSE.txt) | 1.5.322 | ISC |
+| [enhanced-resolve](/legal/licenses/frontend-enhanced-resolve-5.20.1-LICENSE.txt) | 5.20.1 | MIT |
+| [es-toolkit](/legal/licenses/frontend-es-toolkit-1.45.1-LICENSE.txt) | 1.45.1 | MIT |
+| [escalade](/legal/licenses/frontend-escalade-3.2.0-LICENSE.txt) | 3.2.0 | MIT |
+| [escape-string-regexp](/legal/licenses/frontend-escape-string-regexp-4.0.0-LICENSE.txt) | 4.0.0 | MIT |
+| [eslint-plugin-react-hooks](/legal/licenses/frontend-eslint-plugin-react-hooks-7.0.1-LICENSE.txt) | 7.0.1 | MIT |
+| [eslint-plugin-react-refresh](/legal/licenses/frontend-eslint-plugin-react-refresh-0.5.2-LICENSE.txt) | 0.5.2 | MIT |
+| [eslint-scope](/legal/licenses/frontend-eslint-scope-8.4.0-LICENSE.txt) | 8.4.0 | BSD-2-Clause |
+| [eslint-visitor-keys](/legal/licenses/frontend-eslint-visitor-keys-3.4.3-LICENSE.txt) | 3.4.3 | Apache-2.0 |
+| [eslint-visitor-keys](/legal/licenses/frontend-eslint-visitor-keys-4.2.1-LICENSE.txt) | 4.2.1 | Apache-2.0 |
+| [eslint](/legal/licenses/frontend-eslint-9.39.4-LICENSE.txt) | 9.39.4 | MIT |
+| [espree](/legal/licenses/frontend-espree-10.4.0-LICENSE.txt) | 10.4.0 | BSD-2-Clause |
+| [esquery](/legal/licenses/frontend-esquery-1.7.0-LICENSE.txt) | 1.7.0 | BSD-3-Clause |
+| [esrecurse](/legal/licenses/frontend-esrecurse-4.3.0-LICENSE.txt) | 4.3.0 | BSD-2-Clause |
+| [estraverse](/legal/licenses/frontend-estraverse-5.3.0-LICENSE.txt) | 5.3.0 | BSD-2-Clause |
+| [esutils](/legal/licenses/frontend-esutils-2.0.3-LICENSE.txt) | 2.0.3 | BSD-2-Clause |
+| [eventemitter3](/legal/licenses/frontend-eventemitter3-5.0.4-LICENSE.txt) | 5.0.4 | MIT |
+| [fast-deep-equal](/legal/licenses/frontend-fast-deep-equal-3.1.3-LICENSE.txt) | 3.1.3 | MIT |
+| [fast-json-stable-stringify](/legal/licenses/frontend-fast-json-stable-stringify-2.1.0-LICENSE.txt) | 2.1.0 | MIT |
+| [fast-levenshtein](/legal/licenses/frontend-fast-levenshtein-2.0.6-LICENSE.txt) | 2.0.6 | MIT |
+| [fdir](/legal/licenses/frontend-fdir-6.5.0-LICENSE.txt) | 6.5.0 | MIT |
+| [fflate](/legal/licenses/frontend-fflate-0.8.2-LICENSE.txt) | 0.8.2 | MIT |
+| [file-entry-cache](/legal/licenses/frontend-file-entry-cache-8.0.0-LICENSE.txt) | 8.0.0 | MIT |
+| [fill-range](/legal/licenses/frontend-fill-range-7.1.1-LICENSE.txt) | 7.1.1 | MIT |
+| [find-up](/legal/licenses/frontend-find-up-5.0.0-LICENSE.txt) | 5.0.0 | MIT |
+| [flat-cache](/legal/licenses/frontend-flat-cache-4.0.1-LICENSE.txt) | 4.0.1 | MIT |
+| [flatted](/legal/licenses/frontend-flatted-3.4.2-LICENSE.txt) | 3.4.2 | ISC |
+| [fraction.js](/legal/licenses/frontend-fraction.js-5.3.4-LICENSE.txt) | 5.3.4 | MIT |
+| [gensync](/legal/licenses/frontend-gensync-1.0.0-beta.2-LICENSE.txt) | 1.0.0-beta.2 | MIT |
+| [glob-parent](/legal/licenses/frontend-glob-parent-6.0.2-LICENSE.txt) | 6.0.2 | ISC |
+| [globals](/legal/licenses/frontend-globals-14.0.0-LICENSE.txt) | 14.0.0 | MIT |
+| [globals](/legal/licenses/frontend-globals-17.4.0-LICENSE.txt) | 17.4.0 | MIT |
+| [graceful-fs](/legal/licenses/frontend-graceful-fs-4.2.11-LICENSE.txt) | 4.2.11 | ISC |
+| [has-flag](/legal/licenses/frontend-has-flag-4.0.0-LICENSE.txt) | 4.0.0 | MIT |
+| [hermes-estree](/legal/licenses/frontend-hermes-estree-0.25.1-LICENSE.txt) | 0.25.1 | MIT |
+| [hermes-parser](/legal/licenses/frontend-hermes-parser-0.25.1-LICENSE.txt) | 0.25.1 | MIT |
+| [ignore](/legal/licenses/frontend-ignore-5.3.2-LICENSE.txt) | 5.3.2 | MIT |
+| [immer](/legal/licenses/frontend-immer-10.2.0-LICENSE.txt) | 10.2.0 | MIT |
+| [immer](/legal/licenses/frontend-immer-11.1.4-LICENSE.txt) | 11.1.4 | MIT |
+| [import-fresh](/legal/licenses/frontend-import-fresh-3.3.1-LICENSE.txt) | 3.3.1 | MIT |
+| [imurmurhash](/legal/licenses/frontend-imurmurhash-0.1.4-LICENSE.txt) | 0.1.4 | MIT |
+| [internmap](/legal/licenses/frontend-internmap-2.0.3-LICENSE.txt) | 2.0.3 | ISC |
+| [is-extglob](/legal/licenses/frontend-is-extglob-2.1.1-LICENSE.txt) | 2.1.1 | MIT |
+| [is-glob](/legal/licenses/frontend-is-glob-4.0.3-LICENSE.txt) | 4.0.3 | MIT |
+| [is-number](/legal/licenses/frontend-is-number-7.0.0-LICENSE.txt) | 7.0.0 | MIT |
+| [isexe](/legal/licenses/frontend-isexe-2.0.0-LICENSE.txt) | 2.0.0 | ISC |
+| [jiti](/legal/licenses/frontend-jiti-2.6.1-LICENSE.txt) | 2.6.1 | MIT |
+| [js-tokens](/legal/licenses/frontend-js-tokens-4.0.0-LICENSE.txt) | 4.0.0 | MIT |
+| [js-yaml](/legal/licenses/frontend-js-yaml-4.1.1-LICENSE.txt) | 4.1.1 | MIT |
+| [jsesc](/legal/licenses/frontend-jsesc-3.1.0-LICENSE.txt) | 3.1.0 | MIT |
+| [json-buffer](/legal/licenses/frontend-json-buffer-3.0.1-LICENSE.txt) | 3.0.1 | MIT |
+| [json-schema-traverse](/legal/licenses/frontend-json-schema-traverse-0.4.1-LICENSE.txt) | 0.4.1 | MIT |
+| [json-stable-stringify-without-jsonify](/legal/licenses/frontend-json-stable-stringify-without-jsonify-1.0.1-LICENSE.txt) | 1.0.1 | MIT |
+| [json5](/legal/licenses/frontend-json5-2.2.3-LICENSE.txt) | 2.2.3 | MIT |
+| [keyv](/legal/licenses/frontend-keyv-4.5.4-LICENSE.txt) | 4.5.4 | MIT |
+| [levn](/legal/licenses/frontend-levn-0.4.1-LICENSE.txt) | 0.4.1 | MIT |
+| [lightningcss-linux-x64-gnu](/legal/licenses/frontend-lightningcss-linux-x64-gnu-1.32.0-LICENSE.txt) | 1.32.0 | MPL-2.0 |
+| [lightningcss](/legal/licenses/frontend-lightningcss-1.32.0-LICENSE.txt) | 1.32.0 | MPL-2.0 |
+| [locate-path](/legal/licenses/frontend-locate-path-6.0.0-LICENSE.txt) | 6.0.0 | MIT |
+| [lodash.merge](/legal/licenses/frontend-lodash.merge-4.6.2-LICENSE.txt) | 4.6.2 | MIT |
+| [lru-cache](/legal/licenses/frontend-lru-cache-5.1.1-LICENSE.txt) | 5.1.1 | ISC |
+| [lucide-react](/legal/licenses/frontend-lucide-react-1.0.1-LICENSE.txt) | 1.0.1 | ISC |
+| [magic-string](/legal/licenses/frontend-magic-string-0.30.21-LICENSE.txt) | 0.30.21 | MIT |
+| [micromatch](/legal/licenses/frontend-micromatch-4.0.8-LICENSE.txt) | 4.0.8 | MIT |
+| [mini-svg-data-uri](/legal/licenses/frontend-mini-svg-data-uri-1.4.4-LICENSE.txt) | 1.4.4 | MIT |
+| [minimatch](/legal/licenses/frontend-minimatch-3.1.5-LICENSE.txt) | 3.1.5 | ISC |
+| [ms](/legal/licenses/frontend-ms-2.1.3-LICENSE.txt) | 2.1.3 | MIT |
+| [nanoid](/legal/licenses/frontend-nanoid-3.3.11-LICENSE.txt) | 3.3.11 | MIT |
+| [natural-compare](/legal/licenses/frontend-natural-compare-1.4.0-LICENSE.txt) | 1.4.0 | MIT |
+| [node-releases](/legal/licenses/frontend-node-releases-2.0.36-LICENSE.txt) | 2.0.36 | MIT |
+| [optionator](/legal/licenses/frontend-optionator-0.9.4-LICENSE.txt) | 0.9.4 | MIT |
+| [p-limit](/legal/licenses/frontend-p-limit-3.1.0-LICENSE.txt) | 3.1.0 | MIT |
+| [p-locate](/legal/licenses/frontend-p-locate-5.0.0-LICENSE.txt) | 5.0.0 | MIT |
+| [parent-module](/legal/licenses/frontend-parent-module-1.0.1-LICENSE.txt) | 1.0.1 | MIT |
+| [path-exists](/legal/licenses/frontend-path-exists-4.0.0-LICENSE.txt) | 4.0.0 | MIT |
+| [path-key](/legal/licenses/frontend-path-key-3.1.1-LICENSE.txt) | 3.1.1 | MIT |
+| [picocolors](/legal/licenses/frontend-picocolors-1.1.1-LICENSE.txt) | 1.1.1 | ISC |
+| [picomatch](/legal/licenses/frontend-picomatch-2.3.2-LICENSE.txt) | 2.3.2 | MIT |
+| [picomatch](/legal/licenses/frontend-picomatch-4.0.4-LICENSE.txt) | 4.0.4 | MIT |
+| [postcss-value-parser](/legal/licenses/frontend-postcss-value-parser-4.2.0-LICENSE.txt) | 4.2.0 | MIT |
+| [postcss](/legal/licenses/frontend-postcss-8.5.8-LICENSE.txt) | 8.5.8 | MIT |
+| [prelude-ls](/legal/licenses/frontend-prelude-ls-1.2.1-LICENSE.txt) | 1.2.1 | MIT |
+| [punycode](/legal/licenses/frontend-punycode-2.3.1-LICENSE.txt) | 2.3.1 | MIT |
+| [react-dom](/legal/licenses/frontend-react-dom-19.2.4-LICENSE.txt) | 19.2.4 | MIT |
+| [react-is](/legal/licenses/frontend-react-is-19.2.4-LICENSE.txt) | 19.2.4 | MIT |
+| [react-redux](/legal/licenses/frontend-react-redux-9.2.0-LICENSE.txt) | 9.2.0 | MIT |
+| [react](/legal/licenses/frontend-react-19.2.4-LICENSE.txt) | 19.2.4 | MIT |
+| [recharts](/legal/licenses/frontend-recharts-3.8.0-LICENSE.txt) | 3.8.0 | MIT |
+| [redux-thunk](/legal/licenses/frontend-redux-thunk-3.1.0-LICENSE.txt) | 3.1.0 | MIT |
+| [redux](/legal/licenses/frontend-redux-5.0.1-LICENSE.txt) | 5.0.1 | MIT |
+| [reselect](/legal/licenses/frontend-reselect-5.1.1-LICENSE.txt) | 5.1.1 | MIT |
+| [resolve-from](/legal/licenses/frontend-resolve-from-4.0.0-LICENSE.txt) | 4.0.0 | MIT |
+| [rolldown](/legal/licenses/frontend-rolldown-1.0.0-rc.15-LICENSE.txt) | 1.0.0-rc.15 | MIT |
+| [rollup](/legal/licenses/frontend-rollup-4.60.0-LICENSE.txt) | 4.60.0 | MIT |
+| [scheduler](/legal/licenses/frontend-scheduler-0.27.0-LICENSE.txt) | 0.27.0 | MIT |
+| [semver](/legal/licenses/frontend-semver-6.3.1-LICENSE.txt) | 6.3.1 | ISC |
+| [shebang-command](/legal/licenses/frontend-shebang-command-2.0.0-LICENSE.txt) | 2.0.0 | MIT |
+| [shebang-regex](/legal/licenses/frontend-shebang-regex-3.0.0-LICENSE.txt) | 3.0.0 | MIT |
+| [source-map-js](/legal/licenses/frontend-source-map-js-1.2.1-LICENSE.txt) | 1.2.1 | BSD-3-Clause |
+| [strip-json-comments](/legal/licenses/frontend-strip-json-comments-3.1.1-LICENSE.txt) | 3.1.1 | MIT |
+| [supports-color](/legal/licenses/frontend-supports-color-7.2.0-LICENSE.txt) | 7.2.0 | MIT |
+| [tailwindcss](/legal/licenses/frontend-tailwindcss-4.2.2-LICENSE.txt) | 4.2.2 | MIT |
+| [tapable](/legal/licenses/frontend-tapable-2.3.2-LICENSE.txt) | 2.3.2 | MIT |
+| [tiny-invariant](/legal/licenses/frontend-tiny-invariant-1.3.3-LICENSE.txt) | 1.3.3 | MIT |
+| [tinyglobby](/legal/licenses/frontend-tinyglobby-0.2.15-LICENSE.txt) | 0.2.15 | MIT |
+| [to-regex-range](/legal/licenses/frontend-to-regex-range-5.0.1-LICENSE.txt) | 5.0.1 | MIT |
+| [tslib](/legal/licenses/frontend-tslib-2.8.1-LICENSE.txt) | 2.8.1 | 0BSD |
+| [type-check](/legal/licenses/frontend-type-check-0.4.0-LICENSE.txt) | 0.4.0 | MIT |
+| [update-browserslist-db](/legal/licenses/frontend-update-browserslist-db-1.2.3-LICENSE.txt) | 1.2.3 | MIT |
+| [uri-js](/legal/licenses/frontend-uri-js-4.4.1-LICENSE.txt) | 4.4.1 | BSD-2-Clause |
+| [use-sync-external-store](/legal/licenses/frontend-use-sync-external-store-1.6.0-LICENSE.txt) | 1.6.0 | MIT |
+| [victory-vendor](/legal/licenses/frontend-victory-vendor-37.3.6-LICENSE.txt) | 37.3.6 | MIT AND ISC |
+| [vite-plugin-singlefile](/legal/licenses/frontend-vite-plugin-singlefile-2.3.2-LICENSE.txt) | 2.3.2 | MIT |
+| [vite](/legal/licenses/frontend-vite-8.0.8-LICENSE.txt) | 8.0.8 | MIT |
+| [which](/legal/licenses/frontend-which-2.0.2-LICENSE.txt) | 2.0.2 | ISC |
+| [word-wrap](/legal/licenses/frontend-word-wrap-1.2.5-LICENSE.txt) | 1.2.5 | MIT |
+| [yallist](/legal/licenses/frontend-yallist-3.1.1-LICENSE.txt) | 3.1.1 | ISC |
+| [yocto-queue](/legal/licenses/frontend-yocto-queue-0.1.0-LICENSE.txt) | 0.1.0 | MIT |
+| [zod-validation-error](/legal/licenses/frontend-zod-validation-error-4.0.2-LICENSE.txt) | 4.0.2 | MIT |
+| [zod](/legal/licenses/frontend-zod-4.3.6-LICENSE.txt) | 4.3.6 | MIT |
