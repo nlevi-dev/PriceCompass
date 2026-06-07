@@ -3,6 +3,16 @@
 
 Price Compass is an open-source tool designed to provide a granular, verifiable look at the cost of living across borders. Unlike traditional cost-of-living indexes that offer "black box" metrics, Price Compass serves both aggregated insights and the underlying raw data, allowing users to verify, audit, and calculate their own economic indicators.
 
+## Project Status: Discontinued
+
+This project is no longer actively developed or maintained.
+
+After a 2-month pause due to burnout, I returned to find that 1 data source had shut down entirely and 4 others had changed their interfaces. Meaning I'd need to find a replacement vendor, rewrite one scraper from scratch, and rework 4 existing ones just to get back to where I left off.
+
+This pattern is the core problem: scraper-based projects don't have a finish line. They require constant maintenance as vendors update their sites, making it effectively a part-time job with no end in sight. I don't have that kind of free time, and frankly, writing and rewriting scrapers isn't something I find enjoyable enough to justify it.
+
+The repository remains public for anyone who wants to fork it, learn from it, or take it in a different direction. No further updates will be made.
+
 ## Key Features
 
 - **Custom "Shopping Baskets":** Define your own lifestyle. Instead of generic averages, build a monthly cart reflecting what *you* actually consume (e.g., 10L milk, 2 gym memberships, 1 monthly transit pass).
